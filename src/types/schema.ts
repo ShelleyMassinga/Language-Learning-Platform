@@ -140,6 +140,7 @@ export interface User {
     backText: string; // Translation in source language
     example?: string;
     imageUrl?: string;
+    audioUrl?: string;
   }
   
   // Progress tracking
