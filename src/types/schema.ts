@@ -64,10 +64,12 @@ export interface User {
   export interface GrammarRule {
     id: string;
     languageId: string;
-    level: 'beginner' | 'intermediate' | 'advanced';
+    level: string;
     title: string;
     explanation: string;
     examples: GrammarExample[];
+    unitId: string;      // Add this new property
+    topicIndex: number;  // Add this new property
   }
   
   export interface GrammarExample {
@@ -78,6 +80,19 @@ export interface User {
     sourceText: string;
     targetText: string;
     explanation?: string;
+  }
+
+  export interface SyllabusUnit {
+    id: string;
+    languageId: string;
+    level: string;
+    title: string;
+    description: string;
+    units: {
+      id: string;
+      title: string;
+      topics: string[];
+    }[];
   }
   
   // Exercises
@@ -91,12 +106,17 @@ export interface User {
     id: string;
     typeId: string;
     languageId: string;
-    level: 'beginner' | 'intermediate' | 'advanced';
+    level: string;
     question: string;
-    options?: string[]; // For multiple choice
+    options?: string[];
     correctAnswer: string;
     explanation?: string;
-    audioUrl?: string; // For listening exercises
+    audioUrl?: string;
+    matchItems?: { id: string; text: string; }[];
+    matchResponses?: { id: string; text: string; matchesId: string; }[];
+    conjugations?: { pronoun: string; correctForm: string; }[];
+    unitId?: string;          // Add this new property
+    topicIndex?: number;      // Add this new property
   }
   
   // Flashcards
@@ -105,8 +125,12 @@ export interface User {
     name: string;
     sourceLanguageId: string;
     targetLanguageId: string;
-    level: 'beginner' | 'intermediate' | 'advanced';
+    level: string;
     description: string;
+    unitId?: string;          // Add this new property
+    topicIndex?: number;      // Add this new property
+    cardCount?: number;       // Add this new property
+    estimatedTime?: string;   // Add this new property
   }
   
   export interface Flashcard {

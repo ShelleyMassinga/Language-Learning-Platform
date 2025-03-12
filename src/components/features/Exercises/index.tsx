@@ -144,6 +144,32 @@ const Exercises = () => {
     return Math.round((currentExerciseIndex + 1) / filteredExercises.length * 100);
   };
 
+  // Function to speak text using browser's speech synthesis (copied from Phrases component)
+  const speakPhrase = (text: string, langCode: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Set language code (simplified for demo)
+      const languageMap: {[key: string]: string} = {
+        'lang_en': 'en-US',
+        'lang_pt': 'pt-BR',
+        'lang_sw': 'sw'  // Default Swahili code
+      };
+      
+      utterance.lang = languageMap[langCode] || 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+  };
+
+  // Get text to speak for listening exercises
+  const getTextToSpeak = (exercise: Exercise): string => {
+    // If this is a listening exercise, use the correct answer as the text to speak
+    if (exercise.typeId === 'type_4' && exercise.correctAnswer) {
+      return exercise.correctAnswer;
+    }
+    return '';
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">Interactive Exercises</h2>
@@ -245,9 +271,15 @@ const Exercises = () => {
             <h3 className="text-lg font-medium mb-2">{currentExercise.question}</h3>
             
             {/* Audio for listening exercises */}
-            {currentExercise.audioUrl && (
-              <div className="mb-4">
-                <audio controls src={currentExercise.audioUrl} className="w-full"></audio>
+            {currentExercise.typeId === 'type_4' && (
+              <div className="mb-4 flex items-center gap-2">
+                <button 
+                  onClick={() => speakPhrase(getTextToSpeak(currentExercise), currentExercise.languageId)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
+                >
+                  <span>🔊</span> Listen
+                </button>
+                <span className="text-sm text-gray-500">Click to hear the audio</span>
               </div>
             )}
           </div>

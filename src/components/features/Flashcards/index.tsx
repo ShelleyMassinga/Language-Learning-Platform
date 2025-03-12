@@ -197,28 +197,26 @@ const Flashcards = () => {
       {selectedDeck ? (
         <>
           {currentCard ? (
-            <div className="flex flex-col items-center">
-              <div 
-                className="w-full max-w-md aspect-[3/2] bg-white rounded-xl shadow-lg perspective-card relative cursor-pointer"
-                onClick={flipCard}
-              >
-                <div className={`absolute inset-0 transition-transform duration-500 ease-in-out preserve-3d ${flipped ? 'rotate-y-180' : ''}`}>
-                  {/* Front of Card */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl backface-hidden">
-                    <h3 className="text-2xl font-bold mb-2">{currentCard.frontText}</h3>
-                    <p className="text-sm text-gray-500">Click to flip</p>
-                  </div>
-                  
-                  {/* Back of Card */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl backface-hidden rotate-y-180 bg-blue-50">
-                    <h3 className="text-2xl font-bold mb-2">{currentCard.backText}</h3>
-                    {currentCard.example && (
-                      <p className="text-sm text-gray-600 mb-2 italic">{currentCard.example}</p>
-                    )}
-                    <p className="text-sm text-gray-500">Click to flip back</p>
-                  </div>
-                </div>
-              </div>
+  <div className="flex flex-col items-center">
+    <div 
+      className="w-full max-w-md aspect-[3/2] bg-white rounded-xl shadow-lg relative cursor-pointer"
+      onClick={flipCard}
+    >
+      {/* Front of Card */}
+      <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}>
+        <h3 className="text-2xl font-bold mb-2">{currentCard.frontText}</h3>
+        <p className="text-sm text-gray-500">Click to flip</p>
+      </div>
+      
+      {/* Back of Card */}
+      <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl bg-blue-50 transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
+        <h3 className="text-2xl font-bold mb-2">{currentCard.backText}</h3>
+        {currentCard.example && (
+          <p className="text-sm text-gray-600 mb-2 italic">{currentCard.example}</p>
+        )}
+        <p className="text-sm text-gray-500">Click to flip back</p>
+      </div>
+    </div>
               
               {/* Navigation Controls */}
               <div className="flex justify-center gap-4 mt-6">

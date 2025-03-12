@@ -16,5 +16,12 @@ const config: Config = {
     },
   },
   plugins: [],
+  safelist: [
+    'perspective-card',
+    'preserve-3d',
+    'backface-hidden',
+    'rotate-y-180',
+  ],
 }
+
 export default config
