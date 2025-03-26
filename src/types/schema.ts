@@ -109,14 +109,15 @@ export interface User {
     level: string;
     question: string;
     options?: string[];
-    correctAnswer: string;
+    correctAnswer?: string;  // Made optional since some exercise types don't use it
     explanation?: string;
     audioUrl?: string;
     matchItems?: { id: string; text: string; }[];
     matchResponses?: { id: string; text: string; matchesId: string; }[];
     conjugations?: { pronoun: string; correctForm: string; }[];
-    unitId?: string;          // Add this new property
-    topicIndex?: number;      // Add this new property
+    unitId?: string;
+    topicIndex?: number;
+    answerType?: 'text' | 'matching' | 'conjugation';  // Added to specify how to validate the answer
   }
   
   // Flashcards

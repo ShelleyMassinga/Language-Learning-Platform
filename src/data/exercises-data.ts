@@ -58,7 +58,7 @@ export const exercises = [
     level: "beginner",
     unitId: "unit_pt_b1",
     topicIndex: 0,
-    question: "Arrange to form a correct sentence: sou, Eu, brasileiro",
+    question: "sou, Eu, brasileiro",
     correctAnswer: "Eu sou brasileiro",
     explanation: "The correct word order is subject + verb + complement. 'Eu sou brasileiro' means 'I am Brazilian'."
   },
