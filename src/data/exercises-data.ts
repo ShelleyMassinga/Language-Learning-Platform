@@ -6,7 +6,7 @@ export const exerciseTypes = [
   { id: "type_3", name: "word-order", description: "Arrange words to form correct sentences" },
   { id: "type_4", name: "listening", description: "Listen and answer questions" },
   { id: "type_5", name: "matching", description: "Match items from two columns" },
-  { id: "type_6", name: "translation", description: "Translate sentences between languages" },
+  // { id: "type_6", name: "translation", description: "Translate sentences between languages" },
   { id: "type_7", name: "conjugation", description: "Practice verb conjugations" },
   { id: "type_8", name: "dictation", description: "Write what you hear" }
 ];
