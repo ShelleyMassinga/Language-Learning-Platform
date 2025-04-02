@@ -82,7 +82,7 @@ export const flashcards: Flashcard[] = [
     frontText: "pão",
     backText: "bread",
     example: "Eu gosto de pão fresco. (I like fresh bread.)",
-    imageUrl: "/images/flashcards/bread.jpg",
+    imageUrl: "/images/flashcards/bread.png",
     audioUrl: "/audio/pt/pao.mp3"
   },
   {
@@ -100,7 +100,7 @@ export const flashcards: Flashcard[] = [
     frontText: "carro",
     backText: "car",
     example: "O carro é vermelho. (The car is red.)",
-    imageUrl: "/images/flashcards/car.jpg",
+    imageUrl: "/images/flashcards/car.png",
     audioUrl: "/audio/pt/carro.mp3"
   },
   {
@@ -109,7 +109,7 @@ export const flashcards: Flashcard[] = [
     frontText: "livro",
     backText: "book",
     example: "Eu estou lendo um livro. (I am reading a book.)",
-    imageUrl: "/images/flashcards/book.jpg",
+    imageUrl: "/images/flashcards/book.png",
     audioUrl: "/audio/pt/livro.mp3"
   },
   {
@@ -118,7 +118,7 @@ export const flashcards: Flashcard[] = [
     frontText: "amigo/amiga",
     backText: "friend",
     example: "Ele é meu amigo. (He is my friend.)",
-    imageUrl: "/images/flashcards/friend.jpg",
+    imageUrl: "/images/flashcards/friend.png",
     audioUrl: "/audio/pt/amigo.mp3"
   },
   {
@@ -127,7 +127,7 @@ export const flashcards: Flashcard[] = [
     frontText: "família",
     backText: "family",
     example: "Minha família é grande. (My family is big.)",
-    imageUrl: "/images/flashcards/family.jpg",
+    imageUrl: "/images/flashcards/family.png",
     audioUrl: "/audio/pt/familia.mp3"
   },
   {
@@ -145,7 +145,7 @@ export const flashcards: Flashcard[] = [
     frontText: "obrigado/obrigada",
     backText: "thank you",
     example: "Obrigado pela ajuda. (Thank you for the help.)",
-    imageUrl: "/images/flashcards/thanks.jpg",
+    imageUrl: "/images/flashcards/thanks.png",
     audioUrl: "/audio/pt/obrigado.mp3"
   },
   {
@@ -154,7 +154,7 @@ export const flashcards: Flashcard[] = [
     frontText: "por favor",
     backText: "please",
     example: "Água, por favor. (Water, please.)",
-    imageUrl: "/images/flashcards/please.jpg",
+    imageUrl: "/images/flashcards/please.png",
     audioUrl: "/audio/pt/por_favor.mp3"
   },
   

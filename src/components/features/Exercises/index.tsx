@@ -91,7 +91,6 @@ const Exercises = () => {
 
     const currentExercise = filteredExercises[currentExerciseIndex];
     let userAnswer = "";
-    let isCorrect = false;
 
     if (currentExercise.typeId === "type_3") {
       // For word-order, compare typed input if present
@@ -102,29 +101,20 @@ const Exercises = () => {
         // Join the draggedWords array
         userAnswer = draggedWords.join(" ");
       }
-      isCorrect = sanitizeInput(userAnswer) === sanitizeInput(currentExercise.correctAnswer || "");
-    } else if (currentExercise.typeId === "type_5") {
-      // For matching exercises, validate the matches
-      isCorrect = currentExercise.matchItems?.every(item => {
-        const response = currentExercise.matchResponses?.find(r => r.matchesId === item.id);
-        return response && selectedAnswer.includes(`${item.id}-${response.id}`);
-      }) || false;
-    } else if (currentExercise.typeId === "type_7") {
-      // For conjugation exercises, validate each conjugation
-      isCorrect = currentExercise.conjugations?.every(conj => 
-        selectedAnswer.includes(`${conj.pronoun}-${conj.correctForm}`)
-      ) || false;
     } else {
       // Normal comparison for multiple choice, fill-blanks, etc.
       userAnswer = selectedAnswer;
-      isCorrect = sanitizeInput(userAnswer) === sanitizeInput(currentExercise.correctAnswer || "");
     }
 
-    if (!userAnswer && !isCorrect) return; // if truly empty and not a valid answer, do nothing
+    if (!userAnswer) return; // if truly empty, do nothing
+
+    const correct = currentExercise.correctAnswer ? (
+      sanitizeInput(userAnswer) === sanitizeInput(currentExercise.correctAnswer)
+    ) : false;
 
     setIsAnswered(true);
-    setIsCorrect(isCorrect);
-    if (isCorrect) {
+    setIsCorrect(correct);
+    if (correct) {
       setScore(score + 1);
       if (!completedExercises.includes(currentExercise.id)) {
         setCompletedExercises([...completedExercises, currentExercise.id]);
@@ -257,8 +247,12 @@ const Exercises = () => {
                 onChange={(e) => handleLanguageChange(e.target.value)}
                 className="w-full p-2 border rounded-md"
               >
-                {languages.map(lang => (
-                  <option key={lang.id} value={lang.id}>{lang.name}</option>
+                {languages
+                  .filter(lang => lang.id !== "lang_en")
+                  .map(lang => (
+                    <option key={lang.id} value={lang.id}>
+                      {lang.name}
+                    </option>
                 ))}
               </select>
             </div>
@@ -270,7 +264,9 @@ const Exercises = () => {
               </label>
               <select
                 value={currentLevel}
-                onChange={(e) => handleLevelChange(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
+                onChange={(e) =>
+                  handleLevelChange(e.target.value as 'beginner' | 'intermediate' | 'advanced')
+                }
                 className="w-full p-2 border rounded-md"
               >
                 <option value="beginner">Beginner</option>
@@ -291,86 +287,142 @@ const Exercises = () => {
               >
                 <option value="">All Types</option>
                 {exerciseTypes.map(type => (
-                  <option key={type.id} value={type.id}>{type.name}</option>
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* Start Quiz Button */}
-          <button
-            onClick={startQuiz}
-            className="w-full md:w-auto px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-6"
-          >
-            Start Quiz
-          </button>
+          {/* Quiz Mode Button */}
+          {filteredExercises.length > 0 && (
+            <div className="mb-6">
+              <button
+                onClick={startQuiz}
+                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              >
+                Start Quiz Mode ({filteredExercises.length} questions)
+              </button>
+            </div>
+          )}
         </>
       )}
 
-      {exerciseMode === "quiz" && currentExercise && (
-        <div className="space-y-6">
+      {/* Exercise Display */}
+      {currentExercise && exerciseMode !== "results" ? (
+        <div className="bg-white rounded-lg shadow-sm border p-6">
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-              style={{ width: `${calculateProgress()}%` }}
-            ></div>
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-gray-600">
+                Question {currentExerciseIndex + 1} of {filteredExercises.length}
+              </span>
+              {exerciseMode === "quiz" && (
+                <span className="text-sm font-medium text-gray-900">
+                  Score: {score}/{currentExerciseIndex + (isAnswered ? 1 : 0)}
+                </span>
+              )}
+            </div>
+            <div className="h-2 bg-gray-200 rounded">
+              <div
+                className="h-2 bg-blue-500 rounded"
+                style={{ width: `${calculateProgress()}%` }}
+              />
+            </div>
           </div>
 
-          {/* Exercise Content */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium mb-4">{currentExercise.question}</h3>
+          {/* Exercise Type Badge */}
+          <div className="mb-4">
+            <span className="inline-block px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
+              {getTypeName(currentExercise.typeId)}
+            </span>
+          </div>
 
-            {/* Exercise Type Specific Rendering */}
-            {currentExercise.typeId === "type_1" && (
-              <div className="space-y-3">
-                {currentExercise.options?.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswerSelect(option)}
-                    className={`w-full p-3 text-left rounded-md border ${
+          {/* Heading / question */}
+          <div className="mb-6">
+            {currentExercise.typeId === "type_3" ? (
+              <h3 className="text-lg font-medium mb-2">
+                Arrange to form a correct sentence:
+              </h3>
+            ) : (
+              <h3 className="text-lg font-medium mb-2">
+                {currentExercise.question}
+              </h3>
+            )}
+
+            {/* Audio for listening (type_4) */}
+            {currentExercise.typeId === 'type_4' && (
+              <div className="mb-4 flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    speakPhrase(getTextToSpeak(currentExercise), currentExercise.languageId)
+                  }
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
+                >
+                  <span>🔊</span> Listen
+                </button>
+                <span className="text-sm text-gray-500">
+                  Click to hear the audio
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* MULTIPLE-CHOICE, FILL-BLANKS, ETC. */}
+          {currentExercise.options && currentExercise.typeId !== "type_3" && (
+            <div className="space-y-3 mb-6">
+              {currentExercise.options.map((option, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleAnswerSelect(option)}
+                  className={`p-3 border rounded-md cursor-pointer transition-colors
+                    ${
                       selectedAnswer === option
                         ? isAnswered
-                          ? option === currentExercise.correctAnswer
-                            ? "bg-green-100 border-green-500"
-                            : "bg-red-100 border-red-500"
-                          : "bg-blue-50 border-blue-500"
-                        : "hover:bg-gray-50"
-                    }`}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {currentExercise.typeId === "type_2" && (
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={selectedAnswer}
-                  onChange={(e) => handleAnswerSelect(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  placeholder="Type your answer..."
-                />
-                {currentExercise.options && (
-                  <div className="flex flex-wrap gap-2">
-                    {currentExercise.options.map((option, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleAnswerSelect(option)}
-                        className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full"
-                      >
-                        {option}
-                      </button>
-                    ))}
+                          ? isCorrect
+                            ? 'bg-green-100 border-green-500'
+                            : 'bg-red-100 border-red-500'
+                          : 'bg-blue-50 border-blue-500'
+                        : 'hover:bg-gray-50'
+                    }
+                    ${
+                      isAnswered &&
+                      option === currentExercise.correctAnswer &&
+                      !isCorrect
+                        ? 'bg-green-100 border-green-500'
+                        : ''
+                    }
+                  `}
+                >
+                  <div className="flex items-center">
+                    <span className="w-6 h-6 flex items-center justify-center rounded-full border mr-3">
+                      {String.fromCharCode(65 + index)}
+                    </span>
+                    <span>{option}</span>
+                    {isAnswered && (
+                      <span className="ml-auto">
+                        {option === currentExercise.correctAnswer
+                          ? '✓'
+                          : selectedAnswer === option && !isCorrect
+                          ? '✗'
+                          : ''}
+                      </span>
+                    )}
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
+          )}
 
-            {currentExercise.typeId === "type_3" && (
-              <div className="space-y-4">
+          {/* WORD-ORDER (type_3) BLOCK: DRAG & DROP + TYPING */}
+          {currentExercise.typeId === "type_3" && (
+            <div className="mb-6">
+              {/* DRAG-AND-DROP WORDS */}
+              <div className="p-4 bg-gray-50 rounded-md mb-3">
+                <p className="text-sm text-gray-700 mb-2">
+                  Drag the words to reorder:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {draggedWords.map((word, index) => (
                     <div
@@ -379,114 +431,221 @@ const Exercises = () => {
                       onDragStart={() => handleDragStart(index)}
                       onDragOver={(e) => handleDragOver(e, index)}
                       onDrop={handleDrop}
-                      className={`px-3 py-2 bg-gray-100 rounded-md cursor-move ${
-                        draggedIndex === index ? "opacity-50" : ""
-                      }`}
+                      className="px-3 py-1 bg-white border rounded-md shadow-sm cursor-move"
                     >
                       {word}
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* TYPED INPUT (optional alternative) */}
+              <div className="mb-2">
+                <p className="text-sm text-gray-700 mb-2">
+                  Or type your answer below:
+                </p>
                 <input
                   type="text"
                   value={selectedAnswer}
-                  onChange={(e) => handleAnswerSelect(e.target.value)}
+                  onChange={(e) => setSelectedAnswer(e.target.value)}
+                  placeholder="Type the sentence here..."
                   className="w-full p-2 border rounded-md"
-                  placeholder="Or type your answer..."
                 />
               </div>
-            )}
 
-            {currentExercise.typeId === "type_4" && (
-              <div className="space-y-4">
-                <button
-                  onClick={() => speakPhrase(getTextToSpeak(currentExercise), currentExercise.languageId)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md flex items-center gap-2"
+              {/* If answered, show correct / incorrect */}
+              {isAnswered && (
+                <div
+                  className={`mt-3 p-3 rounded-md ${
+                    isCorrect ? 'bg-green-100' : 'bg-red-100'
+                  }`}
                 >
-                  <span>🔊</span> Listen
-                </button>
-                {currentExercise.options && (
-                  <div className="space-y-3">
-                    {currentExercise.options.map((option, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleAnswerSelect(option)}
-                        className={`w-full p-3 text-left rounded-md border ${
-                          selectedAnswer === option
-                            ? isAnswered
-                              ? option === currentExercise.correctAnswer
-                                ? "bg-green-100 border-green-500"
-                                : "bg-red-100 border-red-500"
-                              : "bg-blue-50 border-blue-500"
-                            : "hover:bg-gray-50"
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                  <p className="font-medium">
+                    {isCorrect
+                      ? 'Correct!'
+                      : 'Not quite right. The correct answer is:'}
+                  </p>
+                  {!isCorrect && (
+                    <p className="mt-1 font-medium text-green-700">
+                      {currentExercise.correctAnswer}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
-            {/* Submit Button */}
-            {!isAnswered && (
-              <button
-                onClick={submitAnswer}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Submit Answer
-              </button>
-            )}
-
-            {/* Explanation */}
-            {isAnswered && (
-              <div className="mt-4">
+          {/* Submit Button */}
+          {!isAnswered ? (
+            <button
+              onClick={submitAnswer}
+              disabled={
+                // For word-order, let them at least drag or type
+                currentExercise.typeId === "type_3"
+                  ? !draggedWords.length && !selectedAnswer
+                  : !selectedAnswer
+              }
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Check Answer
+            </button>
+          ) : (
+            <div className="space-y-4">
+              {/* Explanation Toggle */}
+              {currentExercise.explanation && (
                 <button
                   onClick={toggleExplanation}
-                  className="text-blue-500 hover:text-blue-600"
+                  className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200"
                 >
-                  {showExplanation ? "Hide Explanation" : "Show Explanation"}
+                  {showExplanation ? 'Hide Explanation' : 'Show Explanation'}
                 </button>
-                {showExplanation && (
-                  <p className="mt-2 text-gray-600">{currentExercise.explanation}</p>
+              )}
+
+              {showExplanation && currentExercise.explanation && (
+                <div className="p-4 bg-yellow-50 rounded-md border border-yellow-200">
+                  <p className="text-sm text-gray-800">
+                    {currentExercise.explanation}
+                  </p>
+                </div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-between">
+                {exerciseMode === "browse" ? (
+                  <>
+                    <button
+                      onClick={prevExercise}
+                      disabled={currentExerciseIndex === 0}
+                      className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 hover:bg-gray-300"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={nextExercise}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    >
+                      Next
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={nextExercise}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 ml-auto"
+                  >
+                    {currentExerciseIndex < filteredExercises.length - 1
+                      ? 'Next Question'
+                      : 'Finish Quiz'}
+                  </button>
                 )}
               </div>
-            )}
+            </div>
+          )}
+        </div>
+      ) : exerciseMode === "results" ? (
+        // QUIZ RESULTS
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="text-center mb-6">
+            <h3 className="text-2xl font-bold mb-2">Quiz Completed!</h3>
+            <p className="text-gray-600">
+              You scored {score} out of {filteredExercises.length}
+            </p>
 
-            {/* Navigation */}
-            <div className="mt-6 flex justify-between">
-              <button
-                onClick={prevExercise}
-                disabled={currentExerciseIndex === 0}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                onClick={nextExercise}
-                disabled={!isAnswered && currentExerciseIndex < filteredExercises.length - 1}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
-              >
-                {currentExerciseIndex === filteredExercises.length - 1 ? "Finish" : "Next"}
-              </button>
+            <div className="w-32 h-32 mx-auto mt-4 relative">
+              <svg className="w-full h-full" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#f3f4f6"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke={
+                    score / filteredExercises.length >= 0.75
+                      ? "#10b981"
+                      : score / filteredExercises.length >= 0.5
+                      ? "#f59e0b"
+                      : "#ef4444"
+                  }
+                  strokeWidth="3"
+                  strokeDasharray={`${(score / filteredExercises.length) * 100}, 100`}
+                />
+                <text
+                  x="18"
+                  y="20.5"
+                  className="text-5xl font-bold"
+                  textAnchor="middle"
+                  fill="currentColor"
+                >
+                  {Math.round((score / filteredExercises.length) * 100)}%
+                </text>
+              </svg>
             </div>
           </div>
-        </div>
-      )}
 
-      {exerciseMode === "results" && (
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-medium mb-4">Quiz Results</h3>
-          <p className="text-lg mb-4">
-            Your score: {score} out of {filteredExercises.length}
-          </p>
-          <button
-            onClick={returnToBrowse}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Return to Browse
-          </button>
+          <div className="space-y-2 mb-6">
+            {score / filteredExercises.length === 1 && (
+              <div className="p-3 bg-green-100 text-green-800 rounded-md">
+                <p className="font-medium">Perfect score! Excellent work!</p>
+              </div>
+            )}
+            {score / filteredExercises.length >= 0.75 &&
+              score / filteredExercises.length < 1 && (
+              <div className="p-3 bg-green-100 text-green-800 rounded-md">
+                <p className="font-medium">
+                  Great job! You're making excellent progress!
+                </p>
+              </div>
+            )}
+            {score / filteredExercises.length >= 0.5 &&
+              score / filteredExercises.length < 0.75 && (
+              <div className="p-3 bg-yellow-100 text-yellow-800 rounded-md">
+                <p className="font-medium">
+                  Good effort! Keep practicing to improve.
+                </p>
+              </div>
+            )}
+            {score / filteredExercises.length < 0.5 && (
+              <div className="p-3 bg-red-100 text-red-800 rounded-md">
+                <p className="font-medium">
+                  Keep practicing! You'll get better with time.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={returnToBrowse}
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+            >
+              Back to Exercises
+            </button>
+            <button
+              onClick={startQuiz}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            >
+              Retry Quiz
+            </button>
+          </div>
+        </div>
+      ) : (
+        // NO EXERCISES AVAILABLE – or just show exercise types in browse view
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+          {exerciseTypes.map((type) => (
+            <div
+              key={type.id}
+              onClick={() => handleTypeChange(type.id)}
+              className="p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+            >
+              <h3 className="font-medium mb-2">{type.name}</h3>
+              <p className="text-sm text-gray-600">{type.description}</p>
+              <button className="mt-4 text-blue-500 hover:text-blue-600">
+                Start Exercise →
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>

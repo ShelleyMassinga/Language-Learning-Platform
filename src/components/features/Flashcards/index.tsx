@@ -250,11 +250,22 @@ const Flashcards = () => {
           {currentCard ? (
             <div className="flex flex-col items-center">
               <div 
-                className="w-full max-w-md aspect-[3/2] bg-white rounded-xl shadow-lg relative cursor-pointer"
+                className="w-full max-w-md aspect-[3/2] bg-white rounded-xl shadow-lg relative cursor-pointer overflow-hidden"
                 onClick={flipCard}
               >
                 {/* Front of Card */}
                 <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}>
+                  {/* Add image if available */}
+                  {/* Display the image from the card's imageUrl property */}
+                  {currentCard.imageUrl && (
+                    <div className="mb-4 w-32 h-32 overflow-hidden rounded-lg">
+                      <img 
+                        src={currentCard.imageUrl} 
+                        alt={currentCard.frontText}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <h3 className="text-2xl font-bold mb-2">{currentCard.frontText}</h3>
                   <p className="text-sm text-gray-500">Click to flip</p>
                   
@@ -274,6 +285,17 @@ const Flashcards = () => {
                 
                 {/* Back of Card */}
                 <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl bg-blue-50 transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
+                  {/* Add image if available */}
+                  {/* Display the image from the card's imageUrl property */}
+                  {currentCard.imageUrl && (
+                    <div className="mb-4 w-32 h-32 overflow-hidden rounded-lg">
+                      <img 
+                        src={currentCard.imageUrl} 
+                        alt={currentCard.backText}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <h3 className="text-2xl font-bold mb-2">{currentCard.backText}</h3>
                   {currentCard.example && (
                     <p className="text-sm text-gray-600 mb-2 italic">{currentCard.example}</p>

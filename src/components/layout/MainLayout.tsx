@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Book, Globe, GraduationCap, Type, Layout, BarChart2 } from 'lucide-react';
+import { Book, Globe, GraduationCap, Type, Layout, BarChart2, MessageSquare } from 'lucide-react';
 import Dictionary from '../features/Dictionary';
 import Grammar from '../features/Grammar';
 import Exercises from '../features/Exercises';
 import Phrases from '../features/Phrases';
 import Flashcards from '../features/Flashcards';
 import Progress from '../features/Progress';
+import AIConversationPartner from '../features/AIConversationPartner';
 
 interface Tab {
   id: string;
@@ -20,7 +21,8 @@ const tabs: Tab[] = [
   { id: 'grammar', label: 'Grammar', icon: Type, component: Grammar },
   { id: 'exercises', label: 'Exercises', icon: GraduationCap, component: Exercises },
   { id: 'flashcards', label: 'Flashcards', icon: Layout, component: Flashcards },
-  { id: 'progress', label: 'Progress', icon: BarChart2, component: Progress }
+  { id: 'progress', label: 'Progress', icon: BarChart2, component: Progress },
+  { id: 'ai-chat', label: 'AI Chat', icon: MessageSquare, component: AIConversationPartner }
 ];
 
 const MainLayout = () => {
