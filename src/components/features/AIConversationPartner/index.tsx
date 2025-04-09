@@ -1,6 +1,7 @@
 // File: src/components/features/AIConversationPartner/index.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { languages } from '../../../data/dictionary-data';
+import { FiSend, FiGlobe, FiBook, FiCheckSquare, FiSquare, FiMessageSquare } from 'react-icons/fi';
 
 interface Message {
   id: string;
@@ -49,7 +50,7 @@ const AIConversationPartner = () => {
     setIsLoading(true);
 
     try {
-      
+      // TODO: Replace with actual API call
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -102,18 +103,22 @@ const AIConversationPartner = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">AI Conversation Partner</h2>
+      <h2 className="text-2xl font-bold mb-6 gradient-text flex items-center">
+        <FiMessageSquare className="mr-2 h-6 w-6" />
+        AI Conversation Partner
+      </h2>
       
       {/* Language and Difficulty Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <label className="block text-sm font-medium text-indigo-700 mb-2 flex items-center">
+            <FiGlobe className="mr-2" />
             Language
           </label>
           <select
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
           >
             {languages.map(lang => (
               <option key={lang.id} value={lang.id}>{lang.name}</option>
@@ -121,14 +126,15 @@ const AIConversationPartner = () => {
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <label className="block text-sm font-medium text-indigo-700 mb-2 flex items-center">
+            <FiBook className="mr-2" />
             Difficulty Level
           </label>
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
           >
             <option value="beginner">Beginner</option>
             <option value="intermediate">Intermediate</option>
@@ -136,49 +142,63 @@ const AIConversationPartner = () => {
           </select>
         </div>
 
-        <div className="flex items-end">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={showGrammarCorrection}
-              onChange={(e) => setShowGrammarCorrection(e.target.checked)}
-              className="rounded text-blue-500"
-            />
-            <span className="text-sm text-gray-700">Show Grammar Corrections</span>
+        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center">
+          <label className="flex items-center space-x-3 cursor-pointer">
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={showGrammarCorrection}
+                onChange={(e) => setShowGrammarCorrection(e.target.checked)}
+                className="sr-only"
+              />
+              <div className={`w-10 h-6 rounded-full transition-colors ${showGrammarCorrection ? 'bg-gradient-to-r from-indigo-500 to-purple-500' : 'bg-gray-300'}`}>
+                <div className={`absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform ${showGrammarCorrection ? 'transform translate-x-4' : ''}`}></div>
+              </div>
+            </div>
+            <span className="text-sm text-indigo-700">Show Grammar Corrections</span>
           </label>
         </div>
       </div>
 
       {/* Chat Messages */}
-      <div className="bg-white rounded-lg shadow-sm border p-4 mb-4 h-[500px] overflow-y-auto">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`mb-4 ${
-              message.sender === 'user' ? 'text-right' : 'text-left'
-            }`}
-          >
+      <div className="bg-white rounded-xl shadow-md p-6 mb-6 h-[500px] overflow-y-auto border border-indigo-100">
+        {messages.length === 0 ? (
+          <div className="h-full flex items-center justify-center text-gray-400">
+            <p className="text-center">
+              Start a conversation in {getLanguageName(selectedLanguage)}!<br />
+              <span className="text-sm">Select your language and difficulty level above.</span>
+            </p>
+          </div>
+        ) : (
+          messages.map((message) => (
             <div
-              className={`inline-block p-3 rounded-lg ${
-                message.sender === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-800'
+              key={message.id}
+              className={`mb-4 ${
+                message.sender === 'user' ? 'text-right' : 'text-left'
               }`}
             >
-              <p className="whitespace-pre-wrap">{message.text}</p>
-              <span className="text-xs opacity-75 mt-1 block">
-                {message.timestamp.toLocaleTimeString()}
-              </span>
+              <div
+                className={`inline-block p-4 rounded-2xl max-w-[80%] ${
+                  message.sender === 'user'
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'
+                    : 'bg-indigo-50 text-indigo-800 border border-indigo-100'
+                }`}
+              >
+                <p className="whitespace-pre-wrap">{message.text}</p>
+                <span className={`text-xs mt-2 block ${message.sender === 'user' ? 'text-indigo-100' : 'text-indigo-500'}`}>
+                  {message.timestamp.toLocaleTimeString()}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
         {isLoading && (
           <div className="text-left">
-            <div className="inline-block p-3 rounded-lg bg-gray-100 text-gray-800">
+            <div className="inline-block p-4 rounded-2xl bg-indigo-50 text-indigo-800 border border-indigo-100">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                <div className="w-3 h-3 bg-indigo-400 rounded-full animate-bounce"></div>
+                <div className="w-3 h-3 bg-indigo-400 rounded-full animate-bounce delay-100"></div>
+                <div className="w-3 h-3 bg-indigo-400 rounded-full animate-bounce delay-200"></div>
               </div>
             </div>
           </div>
@@ -193,13 +213,14 @@ const AIConversationPartner = () => {
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={`Type your message in ${getLanguageName(selectedLanguage)}...`}
-          className="flex-1 p-2 border rounded-md resize-none h-[60px]"
+          className="flex-1 p-4 border border-indigo-200 rounded-xl resize-none h-[60px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
         />
         <button
           onClick={handleSendMessage}
           disabled={isLoading || !inputMessage.trim()}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[100px]"
         >
+          <FiSend className="mr-2" />
           Send
         </button>
       </div>

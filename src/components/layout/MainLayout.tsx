@@ -31,30 +31,30 @@ const MainLayout = () => {
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || Dictionary;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+    <div className="min-h-screen bg-background">
+      <header className="bg-white dark:bg-gray-800 shadow-md">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Language Learning Platform</h1>
+            <h1 className="text-2xl font-bold gradient-text">Language Learning Platform</h1>
           </div>
         </div>
       </header>
 
-      <nav className="bg-white shadow">
+      {/* Desktop Navigation */}
+      <nav className="hidden md:block bg-white dark:bg-gray-800 shadow-md">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-4 overflow-x-auto">
+          <div className="flex space-x-4 overflow-x-auto py-4">
             {tabs.map((tab) => {
               const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    flex items-center px-3 py-4 text-sm font-medium border-b-2 whitespace-nowrap
-                    ${activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }
+                    nav-item
+                    ${isActive ? 'nav-item-active' : 'nav-item-inactive'}
+                    transform transition-all duration-300 hover:scale-105
                   `}
                 >
                   <Icon className="h-5 w-5 mr-2" />
@@ -66,8 +66,31 @@ const MainLayout = () => {
         </div>
       </nav>
 
+      {/* Mobile Navigation */}
+      <nav className="md:hidden mobile-nav">
+        <div className="grid grid-cols-4 gap-1 p-2">
+          {tabs.slice(0, 4).map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  mobile-nav-item
+                  ${isActive ? 'text-primary' : 'text-gray-500'}
+                `}
+              >
+                <Icon className="h-6 w-6 mx-auto mb-1" />
+                <span className="text-xs">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-lg shadow">
+        <div className="card card-hover-effect">
           <ActiveComponent />
         </div>
       </main>

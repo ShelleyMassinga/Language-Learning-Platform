@@ -3,6 +3,7 @@ import { Language, GrammarRule, GrammarExample } from '../../../types/schema';
 import { languages } from '../../../data/dictionary-data';
 import { grammarRules } from '../../../data/grammar-data';
 import { syllabusUnits } from '../../../data/grammar-data';
+import { Book, ChevronDown, ChevronRight, CheckCircle, Circle, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 
 const Grammar = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>("lang_pt");
@@ -172,75 +173,86 @@ const Grammar = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Grammar Lessons</h2>
-      
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
-          <select
-            value={currentLanguage}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-            className="w-full p-2 border rounded-md"
-          >
-            {languages.filter(lang => lang.id !== "lang_en").map(lang => (
-              <option key={lang.id} value={lang.id}>{lang.name}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
-          <select
-            value={currentLevel}
-            onChange={(e) => handleLevelChange(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
-            className="w-full p-2 border rounded-md"
-          >
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-        
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">View Mode</label>
-          <button
-            onClick={toggleViewMode}
-            className={`w-full p-2 rounded-md ${
-              viewMode === 'syllabus' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            {viewMode === 'syllabus' ? 'Syllabus View' : 'List View'}
-          </button>
+    <div className="max-w-7xl mx-auto p-6">
+      {/* Header Section */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Grammar Lessons</h2>
+        <p className="text-gray-600">Master grammar concepts step by step</p>
+      </div>
+
+      {/* Controls Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+            <select
+              value={currentLanguage}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {languages.filter(lang => lang.id !== "lang_en").map(lang => (
+                <option key={lang.id} value={lang.id}>{lang.name}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Level</label>
+            <select
+              value={currentLevel}
+              onChange={(e) => handleLevelChange(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
+              className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">View Mode</label>
+            <button
+              onClick={toggleViewMode}
+              className={`w-full p-3 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                viewMode === 'syllabus' 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              {viewMode === 'syllabus' ? 'Syllabus View' : 'List View'}
+            </button>
+          </div>
         </div>
       </div>
-      
-      {/* Progress Bar */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-sm text-gray-600">Your progress</span>
-          <span className="text-sm font-medium text-gray-900">{calculateCompletion()}%</span>
+
+      {/* Progress Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Book className="w-5 h-5 text-blue-600" />
+            <span className="font-medium text-gray-900">Your Progress</span>
+          </div>
+          <span className="text-lg font-semibold text-blue-600">{calculateCompletion()}%</span>
         </div>
-        <div className="h-2 bg-gray-200 rounded">
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div 
-            className="h-2 bg-green-500 rounded" 
+            className="h-full bg-blue-600 rounded-full transition-all duration-500" 
             style={{ width: `${calculateCompletion()}%` }}
           ></div>
         </div>
       </div>
-      
-      {/* Syllabus Navigation (only shown in syllabus view) */}
+
+      {/* Syllabus Navigation */}
       {viewMode === 'syllabus' && currentSyllabus && (
-        <div className="mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Unit</label>
               <select
                 value={currentUnit || ""}
                 onChange={(e) => handleUnitChange(e.target.value)}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 {currentSyllabus.units.map((unit: any) => (
                   <option key={unit.id} value={unit.id}>
@@ -251,11 +263,11 @@ const Grammar = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Topic</label>
               <select
                 value={currentTopic !== null ? currentTopic : ""}
                 onChange={(e) => handleTopicChange(parseInt(e.target.value))}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={!currentUnit}
               >
                 {currentUnit && currentSyllabus.units
@@ -269,133 +281,161 @@ const Grammar = () => {
             </div>
           </div>
           
-          {/* Current Path Display */}
-          <div className="bg-gray-50 p-3 rounded-md mt-4">
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Current path: </span>
-              {getLanguageName(currentLanguage)} &gt; {currentLevel} &gt; {getUnitName(currentUnit)} &gt; {getTopicName(currentUnit, currentTopic)}
-            </p>
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span className="font-medium">Current path:</span>
+              <span>{getLanguageName(currentLanguage)}</span>
+              <ChevronRight className="w-4 h-4" />
+              <span>{currentLevel}</span>
+              <ChevronRight className="w-4 h-4" />
+              <span>{getUnitName(currentUnit)}</span>
+              <ChevronRight className="w-4 h-4" />
+              <span>{getTopicName(currentUnit, currentTopic)}</span>
+            </div>
           </div>
         </div>
       )}
-      
+
       {/* Main Content */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-12 gap-8">
         {/* Rules List */}
-        <div className="md:col-span-1 bg-gray-50 p-4 rounded-lg h-min">
-          <h3 className="font-medium mb-3">
-            {viewMode === 'syllabus' 
-              ? `${getTopicName(currentUnit, currentTopic)} Grammar Rules`
-              : "All Grammar Rules"
-            }
-          </h3>
-          
-          {filteredRules.length > 0 ? (
-            <ul className="space-y-2">
-              {filteredRules.map(rule => {
-                const isCompleted = completedRules.includes(rule.id);
-                return (
-                  <li 
-                    key={rule.id}
-                    onClick={() => handleRuleSelect(rule)}
-                    className={`p-3 rounded cursor-pointer transition-colors flex items-center gap-2
-                      ${selectedRule?.id === rule.id ? 'bg-blue-50 border-l-4 border-blue-500' : 'hover:bg-gray-100'}
-                      ${isCompleted ? 'text-green-700' : ''}
-                    `}
-                  >
-                    {isCompleted && (
-                      <span className="text-green-500">✓</span>
-                    )}
-                    <span>{rule.title}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p className="text-gray-600">No grammar rules available for this selection.</p>
-          )}
+        <div className="md:col-span-4">
+          <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+            <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <Lightbulb className="w-5 h-5 text-yellow-500" />
+              {viewMode === 'syllabus' 
+                ? `${getTopicName(currentUnit, currentTopic)} Grammar Rules`
+                : "All Grammar Rules"
+              }
+            </h3>
+            
+            {filteredRules.length > 0 ? (
+              <div className="space-y-2">
+                {filteredRules.map(rule => {
+                  const isCompleted = completedRules.includes(rule.id);
+                  return (
+                    <button
+                      key={rule.id}
+                      onClick={() => handleRuleSelect(rule)}
+                      className={`w-full p-4 rounded-lg text-left transition-colors flex items-center gap-3
+                        ${selectedRule?.id === rule.id 
+                          ? 'bg-blue-50 border-l-4 border-blue-500' 
+                          : 'hover:bg-gray-50'
+                        }
+                        ${isCompleted ? 'text-green-700' : ''}
+                      `}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                      )}
+                      <span className="font-medium">{rule.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-4">No grammar rules available for this selection.</p>
+            )}
+          </div>
         </div>
         
         {/* Rule Details */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-8">
           {selectedRule ? (
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-medium">{selectedRule.title}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">{selectedRule.title}</h3>
                 <button
                   onClick={() => markAsCompleted(selectedRule.id)}
-                  className={`p-2 rounded-md ${
+                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
                     completedRules.includes(selectedRule.id) 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-gray-100 hover:bg-gray-200'
+                      ? 'bg-green-100 text-green-800 hover:bg-green-200' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {completedRules.includes(selectedRule.id) ? 'Completed ✓' : 'Mark as Complete'}
+                  {completedRules.includes(selectedRule.id) ? (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      <span>Completed</span>
+                    </>
+                  ) : (
+                    <>
+                      <Circle className="w-5 h-5" />
+                      <span>Mark as Complete</span>
+                    </>
+                  )}
                 </button>
               </div>
               
-              {/* Path display (if in syllabus view) */}
               {viewMode === 'syllabus' && (
-                <div className="mb-4 text-sm text-gray-600">
-                  <span className="font-medium">From: </span>
-                  {getUnitName(selectedRule.unitId)} &gt; {getTopicName(selectedRule.unitId, selectedRule.topicIndex)}
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className="font-medium">From:</span>
+                    <span>{getUnitName(selectedRule.unitId)}</span>
+                    <ChevronRight className="w-4 h-4" />
+                    <span>{getTopicName(selectedRule.unitId, selectedRule.topicIndex)}</span>
+                  </div>
                 </div>
               )}
               
-              <div className="prose prose-blue max-w-none mb-6">
-                <p>{selectedRule.explanation}</p>
+              <div className="prose prose-blue max-w-none mb-8">
+                <p className="text-gray-700 leading-relaxed">{selectedRule.explanation}</p>
               </div>
               
-              <h4 className="font-medium mb-3">Examples:</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Examples</h4>
               <div className="space-y-4">
                 {selectedRule.examples.map((example: GrammarExample) => (
                   <div 
                     key={example.id}
-                    className="border rounded-md overflow-hidden"
+                    className="border border-gray-200 rounded-lg overflow-hidden"
                   >
-                    <div 
-                      className="flex justify-between items-center p-3 bg-gray-50 cursor-pointer"
+                    <button
+                      className="w-full p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
                       onClick={() => toggleExample(example.id)}
                     >
-                      <div>
-                        <span className="font-medium">{example.sourceText}</span>
-                        <span className="mx-2">→</span>
-                        <span className="text-blue-600">{example.targetText}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="text-gray-600">{example.sourceText}</div>
+                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                        <div className="text-blue-600 font-medium">{example.targetText}</div>
                       </div>
-                      <span>
-                        {expandedExample === example.id ? '▼' : '▲'}
-                      </span>
-                    </div>
+                      <ChevronDown 
+                        className={`w-5 h-5 text-gray-400 transition-transform ${
+                          expandedExample === example.id ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
                     
                     {expandedExample === example.id && example.explanation && (
-                      <div className="p-3 bg-blue-50 text-sm">
-                        <p>{example.explanation}</p>
+                      <div className="p-4 bg-blue-50">
+                        <p className="text-sm text-gray-700">{example.explanation}</p>
                       </div>
                     )}
                   </div>
                 ))}
               </div>
               
-              {/* Related Resources */}
-              <div className="mt-8 border-t pt-4">
-                <h4 className="font-medium mb-2">Practice this rule:</h4>
-                <div className="flex flex-wrap gap-2">
-                  <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">
+              <div className="mt-8 pt-6 border-t">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">Practice this rule</h4>
+                <div className="flex flex-wrap gap-3">
+                  <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
                     Exercises
                   </button>
-                  <button className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200">
+                  <button className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors">
                     Flashcards
                   </button>
-                  <button className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full hover:bg-yellow-200">
+                  <button className="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors">
                     Example Sentences
                   </button>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg h-full">
-              <p className="text-lg text-gray-500 mb-2">Select a grammar rule to begin</p>
-              <p className="text-sm text-gray-400">Learn {getLanguageName(currentLanguage)} grammar step by step</p>
+            <div className="bg-white rounded-xl shadow-sm p-12 flex flex-col items-center justify-center text-center">
+              <BookOpen className="w-12 h-12 text-gray-400 mb-4" />
+              <p className="text-xl text-gray-600 mb-2">Select a grammar rule to begin</p>
+              <p className="text-gray-500">Learn {getLanguageName(currentLanguage)} grammar step by step</p>
             </div>
           )}
         </div>

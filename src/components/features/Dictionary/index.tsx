@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { languages, dictionaryEntries } from '../../../data/dictionary-data';
+import { Search, ArrowRightLeft, Book, Clock, X } from 'lucide-react';
 
 const Dictionary = () => {
   const [sourceLanguage, setSourceLanguage] = useState("lang_en");
@@ -54,39 +55,46 @@ const Dictionary = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Dictionary & Translations</h2>
+      <h2 className="text-2xl font-bold mb-6 gradient-text flex items-center">
+        <Book className="mr-2 h-6 w-6" />
+        Dictionary
+      </h2>
       
       {/* Language Selection */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <label className="block text-sm font-medium text-indigo-700 mb-2">
+            From Language
+          </label>
           <select
             value={sourceLanguage}
             onChange={(e) => setSourceLanguage(e.target.value)}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
           >
             {languages.map(lang => (
               <option key={lang.id} value={lang.id}>{lang.name}</option>
             ))}
           </select>
         </div>
-        
-        <div className="flex items-end justify-center">
-          <button 
+
+        <div className="flex items-center justify-center">
+          <button
             onClick={swapLanguages}
-            className="p-2 border rounded-md hover:bg-gray-100"
+            className="p-3 bg-indigo-100 text-indigo-700 rounded-full hover:bg-indigo-200 transition-colors"
             aria-label="Swap languages"
           >
-            ⇄
+            <ArrowRightLeft className="h-5 w-5" />
           </button>
         </div>
-        
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+
+        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <label className="block text-sm font-medium text-indigo-700 mb-2">
+            To Language
+          </label>
           <select
             value={targetLanguage}
             onChange={(e) => setTargetLanguage(e.target.value)}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
           >
             {languages.map(lang => (
               <option key={lang.id} value={lang.id}>{lang.name}</option>
@@ -94,38 +102,49 @@ const Dictionary = () => {
           </select>
         </div>
       </div>
-      
-      {/* Search Box */}
-      <div className="flex gap-4 mb-6">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && searchDictionary()}
-          placeholder={`Enter a word in ${getLanguageName(sourceLanguage)}...`}
-          className="flex-1 p-2 border rounded-md"
-        />
-        <button 
-          onClick={searchDictionary}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Translate
-        </button>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && searchDictionary()}
+            placeholder={`Search in ${getLanguageName(sourceLanguage)}...`}
+            className="w-full p-4 pr-12 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+          <button
+            onClick={searchDictionary}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-indigo-500 hover:text-indigo-700"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+        </div>
       </div>
-      
+
       {/* Recent Searches */}
       {recentSearches.length > 0 && (
         <div className="mb-6">
-          <p className="text-sm text-gray-500 mb-2">Recent searches:</p>
+          <h3 className="text-sm font-medium text-indigo-700 mb-2 flex items-center">
+            <Clock className="mr-1 h-4 w-4" />
+            Recent Searches
+          </h3>
           <div className="flex flex-wrap gap-2">
             {recentSearches.map((term, index) => (
               <button
                 key={index}
                 onClick={() => {
                   setSearchTerm(term);
-                  searchDictionary();
+                  setSearchResults(
+                    dictionaryEntries.filter(entry => 
+                      entry.sourceLanguageId === sourceLanguage && 
+                      entry.targetLanguageId === targetLanguage &&
+                      entry.word.toLowerCase().includes(term.toLowerCase())
+                    )
+                  );
                 }}
-                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full"
+                className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm hover:bg-indigo-200 transition-colors"
               >
                 {term}
               </button>
@@ -133,55 +152,80 @@ const Dictionary = () => {
           </div>
         </div>
       )}
-      
-      {/* Results Section */}
-      <div className="mt-8 grid md:grid-cols-5 gap-6">
+
+      {/* Results and Details */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Search Results */}
-        <div className={`md:col-span-2 ${selectedEntry ? 'border-r pr-4' : ''}`}>
-          {searchResults.length > 0 ? (
-            <>
-              <h3 className="font-medium mb-3">Results</h3>
-              <ul className="space-y-2">
-                {searchResults.map(entry => (
-                  <li 
-                    key={entry.id}
+        <div className="md:col-span-1 bg-white rounded-xl shadow-sm p-4 h-[500px] overflow-y-auto">
+          <h3 className="text-lg font-medium text-indigo-800 mb-4">Results</h3>
+          {searchResults.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">
+              {searchTerm ? "No results found" : "Search for a word or phrase"}
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {searchResults.map((entry) => (
+                <li key={entry.id}>
+                  <button
                     onClick={() => handleEntrySelect(entry)}
-                    className={`p-2 rounded cursor-pointer hover:bg-gray-100 ${selectedEntry?.id === entry.id ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
+                    className={`w-full text-left p-3 rounded-lg transition-all ${
+                      selectedEntry?.id === entry.id
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'
+                        : 'hover:bg-indigo-50 text-indigo-800'
+                    }`}
                   >
-                    <div className="font-medium">{entry.definitions[0].definition}</div>
-                    <div className="text-sm text-gray-500">{entry.partOfSpeech}</div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : searchTerm ? (
-            <p className="text-gray-600">No results found. Try a different word.</p>
-          ) : null}
-        </div>
-        
-        {/* Definition Details */}
-        {selectedEntry && (
-          <div className="md:col-span-3">
-            <div className="mb-4">
-              <h3 className="text-xl font-medium">{selectedEntry.word}</h3>
-              {selectedEntry.phonetic && (
-                <div className="text-gray-500 italic">{selectedEntry.phonetic}</div>
-              )}
-              <div className="text-sm text-gray-600 mt-1">{selectedEntry.partOfSpeech}</div>
-            </div>
-            
-            <div className="space-y-4">
-              {selectedEntry.definitions.map(def => (
-                <div key={def.id} className="border-b pb-3">
-                  <div className="font-medium text-blue-600">{def.definition}</div>
-                  {def.example && (
-                    <div className="mt-2 text-sm italic text-gray-600">{def.example}</div>
-                  )}
-                </div>
+                    <div className="font-medium">{entry.word}</div>
+                    <div className="text-sm opacity-80">
+                      {entry.definitions[0]?.definition}
+                    </div>
+                  </button>
+                </li>
               ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Entry Details */}
+        <div className="md:col-span-2 bg-white rounded-xl shadow-sm p-6">
+          {selectedEntry ? (
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-2xl font-bold text-indigo-800">{selectedEntry.word}</h3>
+                <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+                  {selectedEntry.partOfSpeech}
+                </span>
+              </div>
+              
+              {selectedEntry.phonetic && (
+                <div className="mb-4 text-indigo-600">
+                  {selectedEntry.phonetic}
+                </div>
+              )}
+              
+              <div className="mb-6">
+                <h4 className="text-lg font-medium text-indigo-700 mb-2">Definitions</h4>
+                <ul className="space-y-4">
+                  {selectedEntry.definitions.map((def) => (
+                    <li key={def.id} className="border-l-4 border-indigo-300 pl-4">
+                      <div className="font-medium text-indigo-800">{def.definition}</div>
+                      {def.example && (
+                        <div className="mt-2 text-gray-600 italic">
+                          "{def.example}"
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="h-full flex items-center justify-center text-gray-400">
+              <p className="text-center">
+                Select a word from the results to see details
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
