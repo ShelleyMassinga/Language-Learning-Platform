@@ -1,3 +1,4 @@
+// File: src/components/features/AIConversationPartner/index.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { languages } from '../../../data/dictionary-data';
 
@@ -48,7 +49,7 @@ const AIConversationPartner = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
+      
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
