@@ -40,6 +40,24 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-purple-50">
+      {/* Navigation Bar */}
+      <nav className="absolute top-0 right-0 p-6 z-20">
+        <div className="flex space-x-6">
+          <button
+            onClick={() => router.push('/login')}
+            className="px-6 py-2.5 text-base font-medium text-teal-600 hover:text-teal-700 transition-colors duration-200"
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => router.push('/signup')}
+            className="px-6 py-2.5 text-base font-medium text-white bg-gradient-to-r from-teal-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 rounded-md transition-all duration-200"
+          >
+            Sign Up
+          </button>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
@@ -53,24 +71,6 @@ const LandingPage: React.FC = () => {
                 <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                   Master new languages through interactive lessons, AI-powered conversations, and personalized learning tools. Start your language journey today!
                 </p>
-                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                  <div className="rounded-md shadow">
-                    <button
-                      onClick={() => router.push('/signup')}
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-teal-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 md:py-4 md:text-lg md:px-10 transition-all duration-300"
-                    >
-                      Get Started
-                    </button>
-                  </div>
-                  <div className="mt-3 sm:mt-0 sm:ml-3">
-                    <button
-                      onClick={() => router.push('/login')}
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-teal-600 bg-teal-50 hover:bg-teal-100 md:py-4 md:text-lg md:px-10 transition-all duration-300"
-                    >
-                      Sign In
-                    </button>
-                  </div>
-                </div>
               </div>
             </main>
           </div>
