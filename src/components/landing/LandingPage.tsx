@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Book, Globe, GraduationCap, MessageSquare, Brain, Trophy } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
@@ -41,17 +42,17 @@ const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-purple-50">
       {/* Navigation Bar */}
-      <nav className="absolute top-0 right-0 p-6 z-20">
-        <div className="flex space-x-6">
+      <nav className="absolute top-0 right-0 p-4 z-20">
+        <div className="flex space-x-4">
           <button
             onClick={() => router.push('/login')}
-            className="px-6 py-2.5 text-base font-medium text-teal-600 hover:text-teal-700 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors duration-200"
           >
             Sign In
           </button>
           <button
             onClick={() => router.push('/signup')}
-            className="px-6 py-2.5 text-base font-medium text-white bg-gradient-to-r from-teal-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 rounded-md transition-all duration-200"
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-teal-600 to-purple-600 hover:from-teal-700 hover:to-purple-700 rounded-md transition-all duration-200"
           >
             Sign Up
           </button>
@@ -73,6 +74,18 @@ const LandingPage: React.FC = () => {
                 </p>
               </div>
             </main>
+          </div>
+        </div>
+        {/* Hero Image */}
+        <div className="absolute inset-y-0 right-0 w-1/2 hidden lg:block">
+          <div className="relative h-full w-full">
+            <Image
+              src="/images/landing-page.png"
+              alt="Language Learning Illustration"
+              layout="fill"
+              objectFit="contain"
+              priority
+            />
           </div>
         </div>
       </div>
