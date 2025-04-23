@@ -2,6 +2,7 @@ import React, { useState, useEffect, DragEvent } from 'react';
 import { Language, Exercise, ExerciseType } from '../../../types/schema';
 import { languages } from '../../../data/dictionary-data';
 import { exerciseTypes, exercises } from '../../../data/exercises-data';
+import { Button } from 'primereact/button';
 
 type ExerciseModeType = "browse" | "quiz" | "results";
 
@@ -239,45 +240,66 @@ const Exercises = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {/* Language Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
                 Language
               </label>
-              <select
-                value={currentLanguage}
-                onChange={(e) => handleLanguageChange(e.target.value)}
-                className="w-full p-2 border rounded-md"
-              >
+              <div className="flex gap-2">
                 {languages
                   .filter(lang => lang.id !== "lang_en")
                   .map(lang => (
-                    <option key={lang.id} value={lang.id}>
+                    <Button
+                      key={lang.id}
+                      onClick={() => handleLanguageChange(lang.id)}
+                      severity={currentLanguage === lang.id ? "success" : "help"}
+                      raised
+                      size="small"
+                      className="flex-1 px-3 py-1"
+                    >
                       {lang.name}
-                    </option>
+                    </Button>
                 ))}
-              </select>
+              </div>
             </div>
 
             {/* Level Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
                 Level
               </label>
-              <select
-                value={currentLevel}
-                onChange={(e) =>
-                  handleLevelChange(e.target.value as 'beginner' | 'intermediate' | 'advanced')
-                }
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => handleLevelChange('beginner')}
+                  severity={currentLevel === 'beginner' ? "info" : "help"}
+                  raised
+                  size="small"
+                  className="flex-1 px-3 py-1"
+                >
+                  Beginner
+                </Button>
+                <Button
+                  onClick={() => handleLevelChange('intermediate')}
+                  severity={currentLevel === 'intermediate' ? "warning" : "help"}
+                  raised
+                  size="small"
+                  className="flex-1 px-3 py-1"
+                >
+                  Intermediate
+                </Button>
+                <Button
+                  onClick={() => handleLevelChange('advanced')}
+                  severity={currentLevel === 'advanced' ? "danger" : "help"}
+                  raised
+                  size="small"
+                  className="flex-1 px-3 py-1"
+                >
+                  Advanced
+                </Button>
+              </div>
             </div>
 
             {/* Exercise Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
                 Exercise Type
               </label>
               <select

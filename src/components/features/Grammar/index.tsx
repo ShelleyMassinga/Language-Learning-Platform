@@ -4,6 +4,7 @@ import { languages } from '../../../data/dictionary-data';
 import { grammarRules } from '../../../data/grammar-data';
 import { syllabusUnits } from '../../../data/grammar-data';
 import { Book, ChevronDown, ChevronRight, CheckCircle, Circle, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
+import { Button } from 'primereact/button';
 
 const Grammar = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>("lang_pt");
@@ -183,34 +184,62 @@ const Grammar = () => {
       {/* Controls Section */}
       <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Language Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
-            <select
-              value={currentLanguage}
-              onChange={(e) => handleLanguageChange(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Language</label>
+            <div className="flex gap-2">
               {languages.filter(lang => lang.id !== "lang_en").map(lang => (
-                <option key={lang.id} value={lang.id}>{lang.name}</option>
+                <Button
+                  key={lang.id}
+                  onClick={() => handleLanguageChange(lang.id)}
+                  severity={currentLanguage === lang.id ? "success" : "help"}
+                  raised
+                  size="small"
+                  className="flex-1 px-3 py-1"
+                >
+                  {lang.name}
+                </Button>
               ))}
-            </select>
+            </div>
           </div>
           
+          {/* Level Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Level</label>
-            <select
-              value={currentLevel}
-              onChange={(e) => handleLevelChange(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
-              className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
+            <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Level</label>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => handleLevelChange('beginner')}
+                severity={currentLevel === 'beginner' ? "info" : "help"}
+                raised
+                size="small"
+                className="flex-1 px-3 py-1"
+              >
+                Beginner
+              </Button>
+              <Button
+                onClick={() => handleLevelChange('intermediate')}
+                severity={currentLevel === 'intermediate' ? "warning" : "help"}
+                raised
+                size="small"
+                className="flex-1 px-3 py-1"
+              >
+                Intermediate
+              </Button>
+              <Button
+                onClick={() => handleLevelChange('advanced')}
+                severity={currentLevel === 'advanced' ? "danger" : "help"}
+                raised
+                size="small"
+                className="flex-1 px-3 py-1"
+              >
+                Advanced
+              </Button>
+            </div>
           </div>
           
+          {/* View Mode Toggle */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">View Mode</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-center">View Mode</label>
             <button
               onClick={toggleViewMode}
               className={`w-full p-3 rounded-lg flex items-center justify-center gap-2 transition-colors ${
