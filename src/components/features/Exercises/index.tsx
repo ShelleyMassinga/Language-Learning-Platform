@@ -1,8 +1,11 @@
 import React, { useState, useEffect, DragEvent } from 'react';
-import { Language, Exercise, ExerciseType } from '../../../types/schema';
+import { Language, Exercise as BaseExercise, ExerciseType } from '../../../types/schema';
 import { languages } from '../../../data/dictionary-data';
 import { exerciseTypes, exercises } from '../../../data/exercises-data';
 import { Button } from 'primereact/button';
+import { Book, ChevronDown, ChevronRight, CheckCircle, Circle, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
+import Select, { SingleValue, FormatOptionLabelMeta } from 'react-select';
+import { GB, PT, KE, ES, FR, DE, IT, RU, JP, KR, CN, SA, IN, TR, NL, PL, VN, TH, ID, MY } from 'country-flag-icons/react/3x2';
 
 type ExerciseModeType = "browse" | "quiz" | "results";
 
@@ -23,6 +26,22 @@ function shuffleArray<T>(array: T[]): T[] {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+interface LanguageOption {
+  value: string;
+  label: string;
+  Flag: any;
+}
+
+const languageOptions: LanguageOption[] = [
+  { value: "lang_pt", label: "Portuguese", Flag: PT },
+  { value: "lang_sw", label: "Swahili", Flag: KE }
+];
+
+// Extend the base Exercise type to include hint
+interface Exercise extends BaseExercise {
+  hint?: string;
 }
 
 const Exercises = () => {
@@ -70,8 +89,10 @@ const Exercises = () => {
   };
 
   // Language/level/type changes
-  const handleLanguageChange = (langId: string) => {
-    setCurrentLanguage(langId);
+  const handleLanguageChange = (option: LanguageOption | null) => {
+    if (option) {
+      setCurrentLanguage(option.value);
+    }
   };
   const handleLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
     setCurrentLevel(level);
@@ -230,6 +251,48 @@ const Exercises = () => {
     setDraggedIndex(null);
   };
 
+  const [activeTab, setActiveTab] = useState<'question' | 'hint' | 'explanation'>('question');
+
+  const customSelectStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      minHeight: '45px',
+      backgroundColor: 'white',
+      borderColor: '#e2e8f0',
+      '&:hover': {
+        borderColor: '#cbd5e0',
+      },
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      border: '1px solid #e2e8f0',
+      borderRadius: '0.375rem',
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
+      color: '#1a202c',
+      '&:hover': {
+        backgroundColor: '#f0f4f8',
+      },
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+    }),
+  };
+
+  const formatOptionLabel = (data: LanguageOption) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <data.Flag style={{ width: '20px', height: '15px' }} />
+      <span>{data.label}</span>
+    </div>
+  );
+
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">Interactive Exercises</h2>
@@ -239,26 +302,20 @@ const Exercises = () => {
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {/* Language Selection */}
-            <div>
+            <div className="flex flex-col items-center w-full">
               <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
                 Language
               </label>
-              <div className="flex gap-2">
-                {languages
-                  .filter(lang => lang.id !== "lang_en")
-                  .map(lang => (
-                    <Button
-                      key={lang.id}
-                      onClick={() => handleLanguageChange(lang.id)}
-                      severity={currentLanguage === lang.id ? "success" : "help"}
-                      raised
-                      size="small"
-                      className="flex-1 px-3 py-1"
-                    >
-                      {lang.name}
-                    </Button>
-                ))}
-              </div>
+              <Select
+                value={languageOptions.find(option => option.value === currentLanguage)}
+                onChange={handleLanguageChange}
+                options={languageOptions}
+                styles={customSelectStyles}
+                className="react-select-container w-full"
+                classNamePrefix="react-select"
+                isSearchable={false}
+                formatOptionLabel={formatOptionLabel}
+              />
             </div>
 
             {/* Level Selection */}
@@ -272,7 +329,11 @@ const Exercises = () => {
                   severity={currentLevel === 'beginner' ? "info" : "help"}
                   raised
                   size="small"
-                  className="flex-1 px-3 py-1"
+                  className={`flex-1 px-3 py-1 ${
+                    currentLevel === 'beginner' 
+                      ? 'bg-green-500 hover:bg-green-600 text-black' 
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
                 >
                   Beginner
                 </Button>
@@ -281,7 +342,11 @@ const Exercises = () => {
                   severity={currentLevel === 'intermediate' ? "warning" : "help"}
                   raised
                   size="small"
-                  className="flex-1 px-3 py-1"
+                  className={`flex-1 px-3 py-1 ${
+                    currentLevel === 'intermediate' 
+                      ? 'bg-yellow-500 hover:bg-orange-500 text-black' 
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
                 >
                   Intermediate
                 </Button>
@@ -290,7 +355,11 @@ const Exercises = () => {
                   severity={currentLevel === 'advanced' ? "danger" : "help"}
                   raised
                   size="small"
-                  className="flex-1 px-3 py-1"
+                  className={`flex-1 px-3 py-1 ${
+                    currentLevel === 'advanced' 
+                      ? 'bg-red-500 hover:bg-red-600 text-black' 
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
                 >
                   Advanced
                 </Button>
@@ -361,32 +430,76 @@ const Exercises = () => {
             </span>
           </div>
 
-          {/* Heading / question */}
+          {/* Tabs */}
           <div className="mb-6">
-            {currentExercise.typeId === "type_3" ? (
-              <h3 className="text-lg font-medium mb-2">
-                Arrange to form a correct sentence:
-              </h3>
-            ) : (
-              <h3 className="text-lg font-medium mb-2">
-                {currentExercise.question}
-              </h3>
-            )}
-
-            {/* Audio for listening (type_4) */}
-            {currentExercise.typeId === 'type_4' && (
-              <div className="mb-4 flex items-center gap-2">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                 <button
-                  onClick={() =>
-                    speakPhrase(getTextToSpeak(currentExercise), currentExercise.languageId)
-                  }
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
+                  onClick={() => setActiveTab('question')}
+                  className={`${
+                    activeTab === 'question'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                 >
-                  <span>🔊</span> Listen
+                  Question
                 </button>
-                <span className="text-sm text-gray-500">
-                  Click to hear the audio
-                </span>
+                <button
+                  onClick={() => setActiveTab('hint')}
+                  className={`${
+                    activeTab === 'hint'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                >
+                  Hint
+                </button>
+                <button
+                  onClick={() => setActiveTab('explanation')}
+                  className={`${
+                    activeTab === 'explanation'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                >
+                  Explanation
+                </button>
+              </nav>
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <div className="mb-6">
+            {activeTab === 'question' && (
+              <div>
+                <h3 className="text-lg font-medium mb-2">
+                  {currentExercise.question}
+                </h3>
+                {currentExercise.typeId === 'type_4' && (
+                  <div className="mb-4 flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        speakPhrase(getTextToSpeak(currentExercise), currentExercise.languageId)
+                      }
+                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
+                    >
+                      <span>🔊</span> Listen
+                    </button>
+                    <span className="text-sm text-gray-500">
+                      Click to hear the audio
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+            {activeTab === 'hint' && (
+              <div className="text-gray-600">
+                {currentExercise.hint || 'No hint available for this exercise.'}
+              </div>
+            )}
+            {activeTab === 'explanation' && (
+              <div className="text-gray-600">
+                {currentExercise.explanation || 'No explanation available for this exercise.'}
               </div>
             )}
           </div>

@@ -2,6 +2,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { languages } from '../../../data/dictionary-data';
 import { FiSend, FiGlobe, FiBook, FiCheckSquare, FiSquare, FiMessageSquare } from 'react-icons/fi';
+import { Button } from 'primereact/button';
+import { PT, KE } from 'country-flag-icons/react/3x2';
+import Select from 'react-select';
 
 interface Message {
   id: string;
@@ -9,6 +12,67 @@ interface Message {
   sender: 'user' | 'ai';
   timestamp: Date;
 }
+
+interface LanguageOption {
+  value: string;
+  label: string;
+  Flag: any;
+}
+
+const languageOptions: LanguageOption[] = [
+  { value: 'lang_pt', label: 'Portuguese', Flag: PT },
+  { value: 'lang_sw', label: 'Swahili', Flag: KE }
+];
+
+const customSelectStyles = {
+  control: (provided: any) => ({
+    ...provided,
+    minHeight: '45px',
+    backgroundColor: 'white',
+    borderColor: '#e2e8f0',
+    '&:hover': {
+      borderColor: '#cbd5e0',
+    },
+  }),
+  option: (provided: any, state: any) => ({
+    ...provided,
+    display: 'flex',
+    alignItems: 'center',
+    padding: '8px 12px',
+    cursor: 'pointer',
+    backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
+    color: '#1a202c',
+    '&:hover': {
+      backgroundColor: '#f0f4f8',
+    },
+  }),
+  singleValue: (provided: any) => ({
+    ...provided,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#1a202c',
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    backgroundColor: 'white',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    border: '1px solid #e2e8f0',
+    borderRadius: '0.375rem',
+  }),
+  menuList: (provided: any) => ({
+    ...provided,
+    backgroundColor: 'white',
+    padding: '4px 0',
+  }),
+};
+
+const formatOptionLabel = (data: LanguageOption) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <data.Flag style={{ width: '20px', height: '15px' }} />
+    <span>{data.label}</span>
+  </div>
+);
 
 const AIConversationPartner = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("lang_pt");
@@ -115,15 +179,16 @@ const AIConversationPartner = () => {
             <FiGlobe className="mr-2" />
             Language
           </label>
-          <select
-            value={selectedLanguage}
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-          >
-            {languages.map(lang => (
-              <option key={lang.id} value={lang.id}>{lang.name}</option>
-            ))}
-          </select>
+          <Select
+            value={languageOptions.find(option => option.value === selectedLanguage)}
+            onChange={(option: any) => setSelectedLanguage(option.value)}
+            options={languageOptions}
+            styles={customSelectStyles}
+            formatOptionLabel={formatOptionLabel}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
         </div>
 
         <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -131,15 +196,47 @@ const AIConversationPartner = () => {
             <FiBook className="mr-2" />
             Difficulty Level
           </label>
-          <select
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
-            className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-          >
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setDifficulty('beginner')}
+              severity={difficulty === 'beginner' ? "info" : "help"}
+              raised
+              size="small"
+              className={`flex-1 px-2 py-1 text-sm ${
+                difficulty === 'beginner' 
+                  ? 'bg-green-500 hover:bg-green-600 text-black' 
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Beginner
+            </Button>
+            <Button
+              onClick={() => setDifficulty('intermediate')}
+              severity={difficulty === 'intermediate' ? "warning" : "help"}
+              raised
+              size="small"
+              className={`flex-1 px-2 py-1 text-sm ${
+                difficulty === 'intermediate' 
+                  ? 'bg-yellow-500 hover:bg-orange-500 text-black' 
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Intermediate
+            </Button>
+            <Button
+              onClick={() => setDifficulty('advanced')}
+              severity={difficulty === 'advanced' ? "danger" : "help"}
+              raised
+              size="small"
+              className={`flex-1 px-2 py-1 text-sm ${
+                difficulty === 'advanced' 
+                  ? 'bg-red-500 hover:bg-red-600 text-black' 
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Advanced
+            </Button>
+          </div>
         </div>
 
         <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center">

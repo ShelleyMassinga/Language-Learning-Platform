@@ -1,10 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { Language } from '../../../types/schema'; 
 import { Flashcard, FlashcardDeck } from '../../../types/schema';
+import Select from 'react-select';
+import { PT, KE } from 'country-flag-icons/react/3x2';
 
 // Assuming these imports are correct and the data files are properly typed
 import { languages } from '../../../data/dictionary-data';
 import { flashcardDecks, flashcards } from '../../../data/flashcards-data';
+
+interface LanguageOption {
+  value: string;
+  label: string;
+  Flag: any;
+}
+
+const languageOptions: LanguageOption[] = [
+  { value: 'lang_pt', label: 'Portuguese', Flag: PT },
+  { value: 'lang_sw', label: 'Swahili', Flag: KE }
+];
+
+const customSelectStyles = {
+  control: (provided: any) => ({
+    ...provided,
+    minHeight: '45px',
+    backgroundColor: 'white',
+    borderColor: '#e2e8f0',
+    '&:hover': {
+      borderColor: '#cbd5e0',
+    },
+  }),
+  option: (provided: any, state: any) => ({
+    ...provided,
+    display: 'flex',
+    alignItems: 'center',
+    padding: '8px 12px',
+    cursor: 'pointer',
+    backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
+    color: '#1a202c',
+    '&:hover': {
+      backgroundColor: '#f0f4f8',
+    },
+  }),
+  singleValue: (provided: any) => ({
+    ...provided,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#1a202c',
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    backgroundColor: 'white',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    border: '1px solid #e2e8f0',
+    borderRadius: '0.375rem',
+  }),
+  menuList: (provided: any) => ({
+    ...provided,
+    backgroundColor: 'white',
+    padding: '4px 0',
+  }),
+};
+
+const formatOptionLabel = (data: LanguageOption) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <data.Flag style={{ width: '20px', height: '15px' }} />
+    <span>{data.label}</span>
+  </div>
+);
 
 const Flashcards = () => {
   const [selectedDeck, setSelectedDeck] = useState<string>("");
@@ -182,34 +245,38 @@ const Flashcards = () => {
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">Flashcards</h2>
       
-      {/* Language Selection */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
-        <select
-          value={currentLanguage}
-          onChange={(e) => handleLanguageChange(e.target.value)}
-          className="w-full md:w-1/2 p-2 border rounded-md"
-        >
-          {languages.filter(lang => lang.id !== "lang_en").map(lang => (
-            <option key={lang.id} value={lang.id}>{lang.name}</option>
-          ))}
-        </select>
-      </div>
-      
-      {/* Deck Selection */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Select a deck</label>
-        <select
-          value={selectedDeck}
-          onChange={(e) => handleDeckChange(e.target.value)}
-          className="w-full md:w-1/2 p-2 border rounded-md"
-          disabled={filteredDecks.length === 0}
-        >
-          <option value="">Select a deck</option>
-          {filteredDecks.map(deck => (
-            <option key={deck.id} value={deck.id}>{deck.name} ({deck.level})</option>
-          ))}
-        </select>
+      {/* Language and Deck Selection - Side by Side */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        {/* Language Selection */}
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+          <Select
+            value={languageOptions.find(option => option.value === currentLanguage)}
+            onChange={(option: any) => handleLanguageChange(option.value)}
+            options={languageOptions}
+            styles={customSelectStyles}
+            formatOptionLabel={formatOptionLabel}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
+        </div>
+        
+        {/* Deck Selection */}
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Select a deck</label>
+          <select
+            value={selectedDeck}
+            onChange={(e) => handleDeckChange(e.target.value)}
+            className="w-full p-2 border rounded-md"
+            disabled={filteredDecks.length === 0}
+          >
+            <option value="">Select a deck</option>
+            {filteredDecks.map(deck => (
+              <option key={deck.id} value={deck.id}>{deck.name} ({deck.level})</option>
+            ))}
+          </select>
+        </div>
       </div>
       
       {/* Study Mode Controls */}
@@ -268,19 +335,6 @@ const Flashcards = () => {
                   )}
                   <h3 className="text-2xl font-bold mb-2">{currentCard.frontText}</h3>
                   <p className="text-sm text-gray-500">Click to flip</p>
-                  
-                  {/* Audio button for front of card */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent card flip when clicking the audio button
-                      playAudio(currentCard.audioUrl, currentCard.frontText);
-                    }}
-                    className="absolute top-3 right-3 p-2 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                    disabled={isPlaying}
-                    aria-label="Listen to pronunciation"
-                  >
-                    {isPlaying ? '🔊' : '🔈'}
-                  </button>
                 </div>
                 
                 {/* Back of Card */}

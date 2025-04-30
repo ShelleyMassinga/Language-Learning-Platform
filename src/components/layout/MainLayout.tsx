@@ -21,8 +21,8 @@ const tabs: Tab[] = [
   { id: 'grammar', label: 'Grammar', icon: Type, component: Grammar },
   { id: 'exercises', label: 'Exercises', icon: GraduationCap, component: Exercises },
   { id: 'flashcards', label: 'Flashcards', icon: Layout, component: Flashcards },
-  { id: 'progress', label: 'Progress', icon: BarChart2, component: Progress },
-  { id: 'ai-chat', label: 'AI Chat', icon: MessageSquare, component: AIConversationPartner }
+  { id: 'ai-chat', label: 'AI Chat', icon: MessageSquare, component: AIConversationPartner },
+  { id: 'progress', label: 'Progress', icon: BarChart2, component: Progress }
 ];
 
 const MainLayout = () => {

@@ -5,6 +5,19 @@ import { grammarRules } from '../../../data/grammar-data';
 import { syllabusUnits } from '../../../data/grammar-data';
 import { Book, ChevronDown, ChevronRight, CheckCircle, Circle, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 import { Button } from 'primereact/button';
+import Select, { SingleValue, FormatOptionLabelMeta } from 'react-select';
+import { GB, PT, KE, ES, FR, DE, IT, RU, JP, KR, CN, SA, IN, TR, NL, PL, VN, TH, ID, MY } from 'country-flag-icons/react/3x2';
+
+interface LanguageOption {
+  code: string;
+  name: string;
+  Flag: any;
+}
+
+const languageOptions: LanguageOption[] = [
+  { code: 'pt', name: 'Portuguese', Flag: PT },
+  { code: 'sw', name: 'Swahili', Flag: KE }
+];
 
 const Grammar = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>("lang_pt");
@@ -57,9 +70,59 @@ const Grammar = () => {
   }, [currentLanguage, currentLevel, currentUnit, currentTopic, viewMode]);
 
   // Handle language change
-  const handleLanguageChange = (langId: string) => {
-    setCurrentLanguage(langId);
+  const handleLanguageChange = (option: LanguageOption) => {
+    setCurrentLanguage(option.code === 'pt' ? 'lang_pt' : 'lang_sw');
   };
+
+  const customSelectStyles = {
+    option: (provided: any, state: any) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      padding: '8px 12px',
+      cursor: 'pointer',
+      backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
+      color: '#1a202c',
+      '&:hover': {
+        backgroundColor: '#f0f4f8',
+      },
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      color: '#1a202c',
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      minHeight: '48px',
+      backgroundColor: 'white',
+      borderColor: '#e2e8f0',
+      '&:hover': {
+        borderColor: '#cbd5e0',
+      },
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      border: '1px solid #e2e8f0',
+      borderRadius: '0.375rem',
+    }),
+    menuList: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      padding: '4px 0',
+    }),
+  };
+
+  const formatOptionLabel = (data: LanguageOption, meta: FormatOptionLabelMeta<LanguageOption>) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <data.Flag style={{ width: '20px', height: '15px' }} />
+      <span>{data.name}</span>
+    </div>
+  );
 
   // Handle level change
   const handleLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
@@ -187,20 +250,16 @@ const Grammar = () => {
           {/* Language Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Language</label>
-            <div className="flex gap-2">
-              {languages.filter(lang => lang.id !== "lang_en").map(lang => (
-                <Button
-                  key={lang.id}
-                  onClick={() => handleLanguageChange(lang.id)}
-                  severity={currentLanguage === lang.id ? "success" : "help"}
-                  raised
-                  size="small"
-                  className="flex-1 px-3 py-1"
-                >
-                  {lang.name}
-                </Button>
-              ))}
-            </div>
+            <Select
+              value={languageOptions.find(lang => (lang.code === 'pt' && currentLanguage === 'lang_pt') || (lang.code === 'sw' && currentLanguage === 'lang_sw'))}
+              onChange={(option) => option && handleLanguageChange(option)}
+              options={languageOptions}
+              formatOptionLabel={formatOptionLabel}
+              styles={customSelectStyles}
+              className="react-select-container"
+              classNamePrefix="react-select"
+              getOptionLabel={(option) => option.name}
+            />
           </div>
           
           {/* Level Selection */}
@@ -212,7 +271,11 @@ const Grammar = () => {
                 severity={currentLevel === 'beginner' ? "info" : "help"}
                 raised
                 size="small"
-                className="flex-1 px-3 py-1"
+                className={`flex-1 px-3 py-1 ${
+                  currentLevel === 'beginner' 
+                    ? 'bg-green-500 hover:bg-green-600 text-black' 
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
               >
                 Beginner
               </Button>
@@ -221,7 +284,11 @@ const Grammar = () => {
                 severity={currentLevel === 'intermediate' ? "warning" : "help"}
                 raised
                 size="small"
-                className="flex-1 px-3 py-1"
+                className={`flex-1 px-3 py-1 ${
+                  currentLevel === 'intermediate' 
+                    ? 'bg-yellow-500 hover:bg-orange-500 text-black' 
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
               >
                 Intermediate
               </Button>
@@ -230,7 +297,11 @@ const Grammar = () => {
                 severity={currentLevel === 'advanced' ? "danger" : "help"}
                 raised
                 size="small"
-                className="flex-1 px-3 py-1"
+                className={`flex-1 px-3 py-1 ${
+                  currentLevel === 'advanced' 
+                    ? 'bg-red-500 hover:bg-red-600 text-black' 
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
               >
                 Advanced
               </Button>

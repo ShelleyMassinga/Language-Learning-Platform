@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Volume2, Copy, Check, Globe, ChevronDown, ArrowRightLeft } from 'lucide-react';
+import Select, { SingleValue, FormatOptionLabelMeta } from 'react-select';
+import { GB, PT, KE, ES, FR, DE, IT, RU, JP, KR, CN, SA, IN, TR, NL, PL, VN, TH, ID, MY } from 'country-flag-icons/react/3x2';
 
 interface Language {
   code: string;
   name: string;
+  Flag: any; // Using any for now to bypass type checking issues
 }
 
 interface WordData {
@@ -20,28 +23,34 @@ interface DictionaryData {
   };
 }
 
-
 const availableLanguages: Language[] = [
-  { code: 'en', name: 'English' },
-  { code: 'pt', name: 'Portuguese' },
-  { code: 'sw', name: 'Swahili' },
-  { code: 'es', name: 'Spanish' },
-  { code: 'fr', name: 'French' },
-  { code: 'de', name: 'German' },
-  { code: 'it', name: 'Italian' },
-  { code: 'ru', name: 'Russian' },
-  { code: 'ja', name: 'Japanese' },
-  { code: 'ko', name: 'Korean' },
-  { code: 'zh', name: 'Chinese' },
+  { code: 'en', name: 'English', Flag: GB },
+  { code: 'pt', name: 'Portuguese', Flag: PT },
+  { code: 'sw', name: 'Swahili', Flag: KE },
+  { code: 'es', name: 'Spanish', Flag: ES },
+  { code: 'fr', name: 'French', Flag: FR },
+  { code: 'de', name: 'German', Flag: DE },
+  { code: 'it', name: 'Italian', Flag: IT },
+  { code: 'ru', name: 'Russian', Flag: RU },
+  { code: 'ja', name: 'Japanese', Flag: JP },
+  { code: 'ko', name: 'Korean', Flag: KR },
+  { code: 'zh', name: 'Chinese', Flag: CN },
+  { code: 'ar', name: 'Arabic', Flag: SA },
+  { code: 'hi', name: 'Hindi', Flag: IN },
+  { code: 'tr', name: 'Turkish', Flag: TR },
+  { code: 'nl', name: 'Dutch', Flag: NL },
+  { code: 'pl', name: 'Polish', Flag: PL },
+  { code: 'vi', name: 'Vietnamese', Flag: VN },
+  { code: 'th', name: 'Thai', Flag: TH },
+  { code: 'id', name: 'Indonesian', Flag: ID },
+  { code: 'ms', name: 'Malay', Flag: MY },
 ];
-
 
 const apiLanguageMapping: {[key: string]: string} = {
   'en': 'en', // English
   'pt': 'pt', // Portuguese
   'sw': 'sw', // Swahili 
 };
-
 
 const mockDictionary: DictionaryData = {
   en: {
@@ -67,8 +76,6 @@ const Dictionary = () => {
   const [copied, setCopied] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState<Language>(availableLanguages[0]);
   const [targetLanguage, setTargetLanguage] = useState<Language>(availableLanguages[1]);
-  const [isSourceLanguageMenuOpen, setIsSourceLanguageMenuOpen] = useState(false);
-  const [isTargetLanguageMenuOpen, setIsTargetLanguageMenuOpen] = useState(false);
   const [currentWord, setCurrentWord] = useState<WordData>({
     word: '',
     pronunciation: '',
@@ -105,28 +112,6 @@ const Dictionary = () => {
       setError('Translation service unavailable. Please try again later.');
       return null;
     }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.language-selector')) {
-        setIsSourceLanguageMenuOpen(false);
-        setIsTargetLanguageMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleCopy = () => {
-    const textToCopy = `Word: ${currentWord.word}\nTranslation: ${currentWord.translation}\nPronunciation: ${currentWord.pronunciation}`;
-    navigator.clipboard.writeText(textToCopy);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSearch = async (searchTerm: string) => {
@@ -184,10 +169,8 @@ const Dictionary = () => {
   const handleLanguageSelect = (language: Language, isSource: boolean) => {
     if (isSource) {
       setSourceLanguage(language);
-      setIsSourceLanguageMenuOpen(false);
     } else {
       setTargetLanguage(language);
-      setIsTargetLanguageMenuOpen(false);
     }
     
     if (searchTerm.trim()) {
@@ -203,37 +186,87 @@ const Dictionary = () => {
     }
   };
 
+  const handleCopy = () => {
+    const textToCopy = `Word: ${currentWord.word}\nTranslation: ${currentWord.translation}\nPronunciation: ${currentWord.pronunciation}`;
+    navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const playPronunciation = () => {
     if (!currentWord.word) return;
     
-    
     const languageMap: Record<string, string> = {
       'en': 'en-US',
-      'pt': 'pt-BR', // Brazilian Portuguese
-      'sw': 'sw-KE'  // Kenyan Swahili
+      'pt': 'pt-BR',
+      'sw': 'sw-KE'
     };
     
-    
     const langCode = languageMap[sourceLanguage.code] || sourceLanguage.code;
-    
-    
     const wordToSpeak = currentWord.word;
     
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(wordToSpeak);
       utterance.lang = langCode;
-      utterance.rate = 0.9; 
-      utterance.pitch = 1.0; 
-      
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
       
       window.speechSynthesis.cancel();
-      
-      
       window.speechSynthesis.speak(utterance);
     } else {
       console.error('Speech synthesis not supported in this browser');
     }
   };
+
+  const customSelectStyles = {
+    option: (provided: any, state: any) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      padding: '8px 12px',
+      cursor: 'pointer',
+      backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
+      color: '#1a202c',
+      '&:hover': {
+        backgroundColor: '#f0f4f8',
+      },
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      color: '#1a202c',
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      minHeight: '48px',
+      backgroundColor: 'white',
+      borderColor: '#e2e8f0',
+      '&:hover': {
+        borderColor: '#cbd5e0',
+      },
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      border: '1px solid #e2e8f0',
+      borderRadius: '0.375rem',
+    }),
+    menuList: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      padding: '4px 0',
+    }),
+  };
+
+  const formatOptionLabel = (data: Language, meta: FormatOptionLabelMeta<Language>) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <data.Flag style={{ width: '20px', height: '15px' }} />
+      <span>{data.name}</span>
+    </div>
+  );
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -244,28 +277,17 @@ const Dictionary = () => {
       {/* Language Selectors */}
       <div className="flex items-center justify-between mb-6 space-x-4">
         {/* Source Language */}
-        <div className="relative language-selector flex-1">
-          <button
-            onClick={() => setIsSourceLanguageMenuOpen(!isSourceLanguageMenuOpen)}
-            className="w-full flex items-center justify-between px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            <span>{sourceLanguage.name}</span>
-            <ChevronDown className="h-4 w-4" />
-          </button>
-          
-          {isSourceLanguageMenuOpen && (
-            <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-              {availableLanguages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => handleLanguageSelect(lang, true)}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                >
-                  {lang.name}
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="flex-1">
+          <Select<Language>
+            value={sourceLanguage}
+            onChange={(option: SingleValue<Language>) => option && handleLanguageSelect(option, true)}
+            options={availableLanguages}
+            formatOptionLabel={formatOptionLabel}
+            styles={customSelectStyles}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            getOptionLabel={(option) => option.name}
+          />
         </div>
 
         {/* Swap Button */}
@@ -278,28 +300,17 @@ const Dictionary = () => {
         </button>
 
         {/* Target Language */}
-        <div className="relative language-selector flex-1">
-          <button
-            onClick={() => setIsTargetLanguageMenuOpen(!isTargetLanguageMenuOpen)}
-            className="w-full flex items-center justify-between px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            <span>{targetLanguage.name}</span>
-            <ChevronDown className="h-4 w-4" />
-          </button>
-          
-          {isTargetLanguageMenuOpen && (
-            <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-              {availableLanguages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => handleLanguageSelect(lang, false)}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                >
-                  {lang.name}
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="flex-1">
+          <Select<Language>
+            value={targetLanguage}
+            onChange={(option: SingleValue<Language>) => option && handleLanguageSelect(option, false)}
+            options={availableLanguages}
+            formatOptionLabel={formatOptionLabel}
+            styles={customSelectStyles}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            getOptionLabel={(option) => option.name}
+          />
         </div>
       </div>
       
