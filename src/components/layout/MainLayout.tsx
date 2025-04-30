@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Book, Globe, GraduationCap, Type, Layout, BarChart2, MessageSquare } from 'lucide-react';
+import { Book, Globe, GraduationCap, Type, Layout, BarChart2, MessageSquare, LogOut } from 'lucide-react';
 import Dictionary from '../features/Dictionary';
 import Grammar from '../features/Grammar';
 import Exercises from '../features/Exercises';
@@ -7,6 +7,7 @@ import Phrases from '../features/Phrases';
 import Flashcards from '../features/Flashcards';
 import Progress from '../features/Progress';
 import AIConversationPartner from '../features/AIConversationPartner';
+import { useRouter } from 'next/navigation';
 
 interface Tab {
   id: string;
@@ -27,8 +28,14 @@ const tabs: Tab[] = [
 
 const MainLayout = () => {
   const [activeTab, setActiveTab] = useState<string>('dictionary');
+  const router = useRouter();
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || Dictionary;
+
+  const handleLogout = () => {
+    // Add logout logic here
+    router.push('/login');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -36,6 +43,13 @@ const MainLayout = () => {
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <h1 className="text-2xl font-bold gradient-text">Language Learning Platform</h1>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       </header>
