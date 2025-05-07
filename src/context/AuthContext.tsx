@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (e.g., check localStorage or session)
+    // Check if user is logged in 
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser));
@@ -37,8 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (email: string, password: string) => {
     try {
-      // Here you would typically make an API call to your backend
-      // For now, we'll simulate a successful signup
       const user = { email };
       setCurrentUser(user);
       localStorage.setItem('user', JSON.stringify(user));
@@ -49,8 +47,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      // Here you would typically make an API call to your backend
-      // For now, we'll simulate a successful login
       const user = { email };
       setCurrentUser(user);
       localStorage.setItem('user', JSON.stringify(user));
@@ -61,8 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      // Here you would typically make an API call to your backend
-      // For now, we'll just clear the local storage
       setCurrentUser(null);
       localStorage.removeItem('user');
     } catch (error) {

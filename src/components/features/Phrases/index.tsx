@@ -34,11 +34,10 @@ const Phrases = () => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Set language code (simplified for demo)
       const languageMap: {[key: string]: string} = {
         'lang_en': 'en-US',
         'lang_pt': 'pt-BR',
-        'lang_sw': 'sw'  // Default Swahili code
+        'lang_sw': 'sw'  
       };
       
       utterance.lang = languageMap[langCode] || 'en-US';

@@ -1,5 +1,3 @@
-// Enhanced Phrases Data with Syllabus Alignment
-
 export const phraseCategories = [
   { id: "cat_1", name: "Greetings", description: "Essential expressions to start conversations" },
   { id: "cat_2", name: "Travel", description: "Useful phrases for navigating and getting around" },
@@ -765,7 +763,7 @@ export const phrases = [
     difficulty: "beginner"
   },
 
-  // Additional phrases for various categories - Portuguese
+  
 
   // Shopping phrases
   {
@@ -1017,7 +1015,6 @@ export const phrases = [
     difficulty: "intermediate"
   },
 
-  // Additional phrases for various categories - Swahili
 
   // Shopping phrases - Swahili
   {
@@ -1220,7 +1217,7 @@ export const phrases = [
   }
 ];
 
-// Add metadata for phrase learning tracking
+
 export const phraseProgress = {
   levels: [
     { id: "level_new", name: "New", description: "Just introduced", color: "#E0E0E0" },
@@ -1230,16 +1227,14 @@ export const phraseProgress = {
   ],
   practiceRecommendations: {
     enabled: true,
-    // Number of phrases to practice per session based on level
     dailyPractice: {
       beginner: 10,
       intermediate: 15,
       advanced: 20
     },
-    // Mix of new vs. review phrases
     distribution: {
-      new: 0.3, // 30% new phrases
-      review: 0.7 // 70% review phrases
+      new: 0.3, 
+      review: 0.7 
     }
   },
   // Mapping phrases to syllabus for integrated learning

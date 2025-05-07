@@ -1,5 +1,3 @@
-// types.ts - Database Schema Types
-
 // User-related types
 export interface User {
     id: string;
@@ -22,8 +20,8 @@ export interface User {
   // Language and content types
   export interface Language {
     id: string;
-    code: string; // e.g., 'en', 'pt', 'sw'
-    name: string; // e.g., 'English', 'Portuguese', 'Swahili'
+    code: string; 
+    name: string; 
   }
   
   // Dictionary entries
@@ -47,7 +45,7 @@ export interface User {
   // Common phrases
   export interface PhraseCategory {
     id: string;
-    name: string; // e.g., 'Greetings', 'Travel', 'Dining'
+    name: string; 
   }
   
   export interface Phrase {
@@ -68,8 +66,8 @@ export interface User {
     title: string;
     explanation: string;
     examples: GrammarExample[];
-    unitId: string;      // Add this new property
-    topicIndex: number;  // Add this new property
+    unitId: string;      
+    topicIndex: number; 
   }
   
   export interface GrammarExample {
@@ -98,7 +96,7 @@ export interface User {
   // Exercises
   export interface ExerciseType {
     id: string;
-    name: string; // 'multiple-choice', 'fill-blanks', 'word-order', 'listening'
+    name: string; 
     description: string;
   }
   
@@ -109,7 +107,7 @@ export interface User {
     level: string;
     question: string;
     options?: string[];
-    correctAnswer?: string;  // Made optional since some exercise types don't use it
+    correctAnswer?: string;  
     explanation?: string;
     audioUrl?: string;
     matchItems?: { id: string; text: string; }[];
@@ -117,7 +115,7 @@ export interface User {
     conjugations?: { pronoun: string; correctForm: string; }[];
     unitId?: string;
     topicIndex?: number;
-    answerType?: 'text' | 'matching' | 'conjugation';  // Added to specify how to validate the answer
+    answerType?: 'text' | 'matching' | 'conjugation';  
   }
   
   // Flashcards
@@ -128,17 +126,17 @@ export interface User {
     targetLanguageId: string;
     level: string;
     description: string;
-    unitId?: string;          // Add this new property
-    topicIndex?: number;      // Add this new property
-    cardCount?: number;       // Add this new property
-    estimatedTime?: string;   // Add this new property
+    unitId?: string;          
+    topicIndex?: number;      
+    cardCount?: number;       
+    estimatedTime?: string;   
   }
   
   export interface Flashcard {
     id: string;
     deckId: string;
-    frontText: string; // Word in target language
-    backText: string; // Translation in source language
+    frontText: string; 
+    backText: string; 
     example?: string;
     imageUrl?: string;
     audioUrl?: string;
@@ -149,9 +147,9 @@ export interface User {
     id: string;
     userId: string;
     languageId: string;
-    vocabularyProgress: number; // Percentage
-    grammarProgress: number; // Percentage
-    exerciseSuccess: number; // Percentage
+    vocabularyProgress: number; 
+    grammarProgress: number; 
+    exerciseSuccess: number; 
     lastUpdated: Date;
   }
   

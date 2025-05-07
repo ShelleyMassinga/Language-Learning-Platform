@@ -33,7 +33,6 @@ const MainLayout = () => {
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || Dictionary;
 
   const handleLogout = () => {
-    // Add logout logic here
     router.push('/login');
   };
 

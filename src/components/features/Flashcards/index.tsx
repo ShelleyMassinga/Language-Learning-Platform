@@ -4,7 +4,7 @@ import { Flashcard, FlashcardDeck } from '../../../types/schema';
 import Select from 'react-select';
 import { PT, KE } from 'country-flag-icons/react/3x2';
 
-// Assuming these imports are correct and the data files are properly typed
+
 import { languages } from '../../../data/dictionary-data';
 import { flashcardDecks, flashcards } from '../../../data/flashcards-data';
 
@@ -81,7 +81,7 @@ const Flashcards = () => {
   const [knownCards, setKnownCards] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
-  // Filter decks by target language
+  
   useEffect(() => {
     const filtered = flashcardDecks.filter(deck => 
       deck.targetLanguageId === currentLanguage
@@ -108,21 +108,19 @@ const Flashcards = () => {
   // Function to speak text using browser's speech synthesis
   const speakText = (text: string, langCode: string) => {
     if ('speechSynthesis' in window) {
-      // Cancel any ongoing speech
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Set language code (map language IDs to proper lang codes)
+      
       const languageMap: {[key: string]: string} = {
         'lang_en': 'en-US',
         'lang_pt': 'pt-BR',
-        'lang_sw': 'sw'  // Default Swahili code
+        'lang_sw': 'sw'  
       };
       
       utterance.lang = languageMap[langCode] || 'en-US';
       
-      // Add event handlers to track speech state
       utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
       utterance.onerror = () => setIsPlaying(false);
@@ -133,8 +131,7 @@ const Flashcards = () => {
 
   // Function to play audio file if available, or use speech synthesis if not
   const playAudio = (audioUrl?: string, text?: string) => {
-    if (audioUrl && false) { // Set to false to always use speech synthesis for development
-      // If there's an audio file, play it
+    if (audioUrl && false) { 
       const audio = new Audio(audioUrl);
       
       // Add event handlers to track audio playback state
@@ -150,7 +147,6 @@ const Flashcards = () => {
       
       audio.play();
     } else if (text && currentLanguage) {
-      // Use speech synthesis if no audio file
       speakText(text, currentLanguage);
     }
   };
@@ -193,7 +189,6 @@ const Flashcards = () => {
       setCurrentCardIndex(currentCardIndex + 1);
       setFlipped(false);
     } else if (studyMode) {
-      // If in study mode and reached the end, restart with only unknown cards
       const remainingCards = deckCards.filter(card => !knownCards.includes(card.id));
       if (remainingCards.length > 0) {
         const newDeckCards = [...remainingCards];
@@ -202,7 +197,6 @@ const Flashcards = () => {
         setFlipped(false);
         setProgress(Math.round((knownCards.length / flashcards.filter(card => card.deckId === selectedDeck).length) * 100));
       } else {
-        // All cards are known!
         setStudyMode(false);
         setProgress(100);
       }
@@ -245,7 +239,7 @@ const Flashcards = () => {
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">Flashcards</h2>
       
-      {/* Language and Deck Selection - Side by Side */}
+      
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         {/* Language Selection */}
         <div className="flex-1">
@@ -322,8 +316,6 @@ const Flashcards = () => {
               >
                 {/* Front of Card */}
                 <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl transition-opacity duration-300 ${flipped ? 'opacity-0' : 'opacity-100'}`}>
-                  {/* Add image if available */}
-                  {/* Display the image from the card's imageUrl property */}
                   {currentCard.imageUrl && (
                     <div className="mb-4 w-32 h-32 overflow-hidden rounded-lg">
                       <img 
@@ -339,8 +331,6 @@ const Flashcards = () => {
                 
                 {/* Back of Card */}
                 <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 border border-gray-200 rounded-xl bg-blue-50 transition-opacity duration-300 ${flipped ? 'opacity-100' : 'opacity-0'}`}>
-                  {/* Add image if available */}
-                  {/* Display the image from the card's imageUrl property */}
                   {currentCard.imageUrl && (
                     <div className="mb-4 w-32 h-32 overflow-hidden rounded-lg">
                       <img 

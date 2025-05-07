@@ -6,7 +6,7 @@ import { GB, PT, KE, ES, FR, DE, IT, RU, JP, KR, CN, SA, IN, TR, NL, PL, VN, TH,
 interface Language {
   code: string;
   name: string;
-  Flag: any; // Using any for now to bypass type checking issues
+  Flag: any; 
 }
 
 interface WordData {
@@ -47,9 +47,9 @@ const availableLanguages: Language[] = [
 ];
 
 const apiLanguageMapping: {[key: string]: string} = {
-  'en': 'en', // English
-  'pt': 'pt', // Portuguese
-  'sw': 'sw', // Swahili 
+  'en': 'en', 
+  'pt': 'pt', 
+  'sw': 'sw', 
 };
 
 const mockDictionary: DictionaryData = {

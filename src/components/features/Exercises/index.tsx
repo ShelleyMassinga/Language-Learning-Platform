@@ -18,7 +18,6 @@ function sanitizeInput(str: string): string {
     .trim();
 }
 
-// Optional: a small utility to shuffle an array
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -39,7 +38,6 @@ const languageOptions: LanguageOption[] = [
   { value: "lang_sw", label: "Swahili", Flag: KE }
 ];
 
-// Extend the base Exercise type to include hint
 interface Exercise extends BaseExercise {
   hint?: string;
 }
@@ -101,7 +99,7 @@ const Exercises = () => {
     setCurrentType(typeId);
   };
 
-  // For multiple choice, fill-blanks, etc.
+  // For multiple choice, fill-blanks
   const handleAnswerSelect = (answer: string) => {
     if (isAnswered) return;
     setSelectedAnswer(answer);
@@ -115,20 +113,16 @@ const Exercises = () => {
     let userAnswer = "";
 
     if (currentExercise.typeId === "type_3") {
-      // For word-order, compare typed input if present
-      // If typed input is empty, compare the drag-and-drop arrangement
       if (selectedAnswer.trim()) {
         userAnswer = selectedAnswer;
       } else {
-        // Join the draggedWords array
         userAnswer = draggedWords.join(" ");
       }
     } else {
-      // Normal comparison for multiple choice, fill-blanks, etc.
       userAnswer = selectedAnswer;
     }
 
-    if (!userAnswer) return; // if truly empty, do nothing
+    if (!userAnswer) return; 
 
     const correct = currentExercise.correctAnswer ? (
       sanitizeInput(userAnswer) === sanitizeInput(currentExercise.correctAnswer)
@@ -217,22 +211,18 @@ const Exercises = () => {
     ? filteredExercises[currentExerciseIndex]
     : null;
 
-  // WORD-ORDER (type_3) LOGIC STARTS HERE
   useEffect(() => {
     if (
       currentExercise &&
       currentExercise.typeId === "type_3" &&
       currentExercise.question
     ) {
-      // Split the question into words, shuffle them for the drag interface
       const wordsArray = currentExercise.question.split(', ').map(w => w.trim());
-      // Shuffle them (optional)
       const shuffled = shuffleArray(wordsArray);
       setDraggedWords(shuffled);
     }
   }, [currentExercise]);
 
-  // Handle drag and drop for type_3
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
@@ -240,9 +230,7 @@ const Exercises = () => {
     e.preventDefault(); 
     if (draggedIndex === null || draggedIndex === index) return;
     const newOrder = [...draggedWords];
-    // Remove the item from old position
     const [removed] = newOrder.splice(draggedIndex, 1);
-    // Insert it at hover position
     newOrder.splice(index, 0, removed);
     setDraggedIndex(index);
     setDraggedWords(newOrder);
@@ -574,7 +562,6 @@ const Exercises = () => {
                 </div>
               </div>
 
-              {/* TYPED INPUT (optional alternative) */}
               <div className="mb-2">
                 <p className="text-sm text-gray-700 mb-2">
                   Or type your answer below:
@@ -615,7 +602,6 @@ const Exercises = () => {
             <button
               onClick={submitAnswer}
               disabled={
-                // For word-order, let them at least drag or type
                 currentExercise.typeId === "type_3"
                   ? !draggedWords.length && !selectedAnswer
                   : !selectedAnswer
@@ -766,7 +752,6 @@ const Exercises = () => {
           </div>
         </div>
       ) : (
-        // NO EXERCISES AVAILABLE – or just show exercise types in browse view
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
           {exerciseTypes.map((type) => (
             <div

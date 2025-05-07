@@ -59,28 +59,25 @@ const Progress = () => {
     fetchUserActivities(currentLanguage);
   }, [currentLanguage]);
 
-  // Simulated API call to fetch user progress data
   const fetchUserProgress = (languageId: string) => {
-    // In a real app, this would be an API call to your backend
-    // For now, we'll calculate progress based on our sample data
     try {
       // Calculate progress metrics based on activities
       const totalExercises = exercises.filter(ex => ex.languageId === languageId).length;
-      const completedExercises = Math.floor(Math.random() * totalExercises); // Simulate completed exercises
+      const completedExercises = Math.floor(Math.random() * totalExercises); 
       
       const totalFlashcards = flashcards.filter(card => {
         const deck = flashcardDecks.find(deck => deck.id === card.deckId);
         return deck?.targetLanguageId === languageId;
       }).length;
-      const masteredFlashcards = Math.floor(Math.random() * totalFlashcards); // Simulate mastered flashcards
+      const masteredFlashcards = Math.floor(Math.random() * totalFlashcards); 
       
       const totalGrammarRules = grammarRules.filter(rule => rule.languageId === languageId).length;
-      const learnedGrammarRules = Math.floor(Math.random() * totalGrammarRules); // Simulate learned grammar rules
+      const learnedGrammarRules = Math.floor(Math.random() * totalGrammarRules); 
       
       // Calculate percentages
       const vocabProgress = totalFlashcards ? Math.round((masteredFlashcards / totalFlashcards) * 100) : 0;
       const grammarProgress = totalGrammarRules ? Math.round((learnedGrammarRules / totalGrammarRules) * 100) : 0;
-      const exerciseSuccess = completedExercises ? Math.round(Math.random() * 100) : 0; // Simulate exercise success rate
+      const exerciseSuccess = completedExercises ? Math.round(Math.random() * 100) : 0; 
       
       // Determine level based on progress
       let level: 'beginner' | 'intermediate' | 'advanced' = "beginner";
@@ -102,9 +99,9 @@ const Progress = () => {
         learnedGrammarRules: learnedGrammarRules,
         totalGrammarRules: totalGrammarRules,
         level: level,
-        streak: Math.floor(Math.random() * 30) + 1, // Simulate streak (1-30 days)
-        totalTimeSpent: Math.floor(Math.random() * 1000) + 60, // Simulate time spent (60-1060 minutes)
-        lastActive: new Date(Date.now() - Math.floor(Math.random() * 86400000)), // Random time in the last 24 hours
+        streak: Math.floor(Math.random() * 30) + 1, 
+        totalTimeSpent: Math.floor(Math.random() * 1000) + 60, 
+        lastActive: new Date(Date.now() - Math.floor(Math.random() * 86400000)), 
         strengthByCategory: {
           vocabulary: vocabProgress,
           grammar: grammarProgress,
@@ -124,11 +121,9 @@ const Progress = () => {
     }
   };
 
-  // Simulated API call to fetch user activity history
+  
   const fetchUserActivities = (languageId: string) => {
-    // In a real app, this would be an API call to your backend
     try {
-      // Generate sample activity data for the past 7 days
       const today = new Date();
       const activities: UserActivity[] = [];
       
@@ -137,7 +132,7 @@ const Progress = () => {
         'dictionary', 'phrases', 'grammar', 'exercises', 'flashcards'
       ];
       
-      // Generate 1-5 activities per day for the last 7 days
+      
       for (let i = 0; i < 7; i++) {
         const day = new Date(today);
         day.setDate(today.getDate() - i);
@@ -148,7 +143,6 @@ const Progress = () => {
           const activityType = activityTypes[Math.floor(Math.random() * activityTypes.length)];
           
           let itemId = '';
-          // Assign realistic item IDs based on activity type
           switch(activityType) {
             case 'dictionary':
               const dictEntries = exercises.filter(ex => ex.languageId === languageId);
@@ -179,7 +173,7 @@ const Progress = () => {
             languageId: languageId,
             activityType: activityType,
             itemId: itemId,
-            completedAt: new Date(day.getTime() - Math.floor(Math.random() * 86400000 / 2)), // Random time during the day
+            completedAt: new Date(day.getTime() - Math.floor(Math.random() * 86400000 / 2)), 
             score: activityType === 'exercises' ? Math.floor(Math.random() * 100) : null
           };
           
@@ -280,8 +274,7 @@ const Progress = () => {
       const dayDiff = Math.floor((today.getTime() - activityDate.getTime()) / (1000 * 60 * 60 * 24));
       
       if (dayDiff >= 0 && dayDiff < 7) {
-        // Assume each activity takes around 10-30 minutes
-        hours[dayDiff] += (Math.random() * 0.33 + 0.17); // 0.17-0.5 hours (10-30 minutes)
+        hours[dayDiff] += (Math.random() * 0.33 + 0.17); 
       }
     });
     
@@ -494,7 +487,6 @@ const Progress = () => {
           
           {/* Two-Column Layout for Remaining Sections */}
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Skill Strength Chart */}
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h3 className="font-medium mb-4">Skill Strength</h3>
               <div className="space-y-4">

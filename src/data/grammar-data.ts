@@ -1,5 +1,3 @@
-// Enhanced Grammar Data with Syllabus Structure
-
 export const syllabusUnits = [
   // Portuguese Syllabus
   {
@@ -572,7 +570,6 @@ export const grammarRules = [
     ]
   },
   
-  // Many more Portuguese grammar rules would be added here...
   
   // SWAHILI GRAMMAR - BEGINNER LEVEL
   
@@ -755,7 +752,4 @@ export const grammarRules = [
     ]
   },
   
-  // Many more Swahili grammar rules would be added here...
-  
-  // This is just a small sample - the full file would contain many more grammar rules for each unit
 ];

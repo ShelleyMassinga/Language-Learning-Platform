@@ -6,7 +6,6 @@ export const exerciseTypes = [
   { id: "type_3", name: "word-order", description: "Arrange words to form correct sentences" },
   { id: "type_4", name: "listening", description: "Listen and answer questions" },
   { id: "type_5", name: "matching", description: "Match items from two columns" },
-  // { id: "type_6", name: "translation", description: "Translate sentences between languages" },
   { id: "type_7", name: "conjugation", description: "Practice verb conjugations" },
   { id: "type_8", name: "dictation", description: "Write what you hear" }
 ];
@@ -181,7 +180,7 @@ export const exercises = [
     explanation: "These are the present tense conjugations for the regular -er verb 'comer'."
   },
   
-  // Continue with many more Portuguese exercises...
+  
   
   // SWAHILI EXERCISES - BEGINNER LEVEL
   
@@ -277,19 +276,16 @@ export const exercises = [
     explanation: "Subject prefixes in Swahili change based on the person and number."
   },
   
-  // And many more Swahili exercises...
   
-  // This is just a sample - a complete implementation would have many more exercises
-  // covering all units and topics in the syllabus
 ];
 
 export const lessonProgress = {
   trackCompletion: true,
-  passingScore: 80, // percentage
+  passingScore: 80, 
   experiencePoints: {
-    completion: 10, // XP for completing an exercise
-    perfectScore: 15, // additional XP for 100% correct
-    firstAttempt: 5 // bonus XP for correct on first try
+    completion: 10, 
+    perfectScore: 15, 
+    firstAttempt: 5 
   },
   badges: [
     { id: "badge_beginner", title: "Beginner", description: "Complete all beginner exercises", imageUrl: "/images/badges/beginner.png" },

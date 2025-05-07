@@ -16,7 +16,7 @@ export interface Flashcard {
   backText: string;
   example?: string;
   imageUrl?: string;
-  audioUrl?: string; // New property for audio files
+  audioUrl?: string; 
 }
 
 export const flashcardDecks: FlashcardDeck[] = [

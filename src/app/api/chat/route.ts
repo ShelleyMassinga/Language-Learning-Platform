@@ -20,7 +20,6 @@ export async function POST(req: Request) {
 
     const languageName = languageMap[language] || 'English';
 
-    // 🔥 Updated prompt
     const prompt = `
 You are an AI conversation partner helping someone practice ${languageName} at a ${difficulty} level.
 

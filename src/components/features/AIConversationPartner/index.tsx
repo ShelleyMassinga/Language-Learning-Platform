@@ -1,4 +1,3 @@
-// File: src/components/features/AIConversationPartner/index.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { languages } from '../../../data/dictionary-data';
 import { FiSend, FiGlobe, FiBook, FiCheckSquare, FiSquare, FiMessageSquare } from 'react-icons/fi';
@@ -114,7 +113,6 @@ const AIConversationPartner = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -144,7 +142,7 @@ const AIConversationPartner = () => {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error:', error);
-      // Add error message to chat
+      // Adds error message to chat
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: "I apologize, but I'm having trouble responding right now. Please try again later.",

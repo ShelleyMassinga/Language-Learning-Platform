@@ -32,11 +32,8 @@ const SyllabusPage = () => {
     setExpandedTopic(null);
   }, [currentLanguage, currentLevel]);
   
-  // Simulate loading user progress
   useEffect(() => {
-    // In a real app, this would come from your progress tracking system
     const mockProgress: Record<string, number | boolean> = {};
-    // Generate random progress for demo purposes
     grammarRules.forEach(rule => {
       mockProgress[rule.id] = Math.random() > 0.5;
     });

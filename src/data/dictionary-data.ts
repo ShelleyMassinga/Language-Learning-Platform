@@ -1,7 +1,3 @@
-// File: src/data/dictionary-data.ts
-// Sample Dictionary Data
-// English to Portuguese & Portuguese to English
-
 export const languages = [
     { id: "lang_en", code: "en", name: "English" },
     { id: "lang_pt", code: "pt", name: "Portuguese" },
